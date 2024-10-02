@@ -1,0 +1,29 @@
+.navbar {
+  border-bottom: 1px solid #c3c7c6;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  background-color: rgb(10, 95, 213);
+}
+
+#sidebar {
+  width: 280px;
+  border-right: 1px solid #c3c7c6;
+  height: auto;
+}
+
+#sidebar .nav-item{
+  background-color: rgba(123, 193, 220, 0.3);
+  width: 100%;
+  border-radius: 10px;
+}
+
+#sidebar .nav-item:hover {
+  background-color: rgba(19, 203, 62, 0.6); /* Màu nền khi hover */
+}
+
+#sidebar .nav-item:hover .nav-link {
+  color: #e8e6e6; /* Màu chữ khi hover */
+}
+
+#sidebar .nav-item .nav-link {
+  transition: background-color 0.3s, color 0.3s; /* Hiệu ứng chuyển đổi mượt mà */
+}
