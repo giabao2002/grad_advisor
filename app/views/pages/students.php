@@ -26,7 +26,7 @@ if ($search) {
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập mã sinh viên" aria-label="Search" required>
         <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
     </form>
-    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addModal"><i class="material-icons">add</i> Thêm sinh viên</button>
+    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal"><i class="material-icons">add</i> Thêm sinh viên</button>
     <table class="table">
         <thead>
             <tr>
@@ -49,7 +49,7 @@ if ($search) {
                     <td><?php echo htmlspecialchars($student['email']); ?></td>
                     <td><?php echo htmlspecialchars($student['major']); ?></td>
                     <td>
-                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editModal"
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
                             data-id="<?php echo $student['id']; ?>"
                             data-student_code="<?php echo htmlspecialchars($student['student_code']); ?>"
                             data-full_name="<?php echo htmlspecialchars($student['full_name']); ?>"
@@ -82,86 +82,67 @@ if ($search) {
         </li>
     </ul>
     <!-- Modal thêm sinh viên -->
-    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addModalLabel">Thêm sinh viên</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="/app/controller/StudentController.php" method="post" id="addStudentForm">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="store">
-                        <div class="mb-3">
-                            <label for="student_code" class="form-label">Mã sinh viên</label>
-                            <input type="text" class="form-control" id="student_code" placeholder="Nhập mà sinh viên" name="student_code" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Tên sinh viên</label>
-                            <input type="text" class="form-control" id="name" placeholder="Nhập tên đầy đủ" name="full_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="dob" class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" id="dob" name="dob" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="major" class="form-label">Ngành học</label>
-                            <input type="text" class="form-control" id="major" placeholder="Nhập ngành học" name="major" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                    </div>
-                </form>
-            </div>
+    <?php
+    $modalId = "addStudentModal";
+    $modalLabelId = "addStudentModalLabel";
+    $modalTitle = "Thêm sinh viên";
+    $formAction = "/app/controller/StudentController.php";
+    $formId = "addStudentForm";
+    $formContent = '
+        <input type="hidden" name="action" value="store">
+        <div class="mb-3">
+            <label for="student_code" class="form-label">Mã sinh viên</label>
+            <input type="text" class="form-control" id="student_code" placeholder="Nhập mà sinh viên" name="student_code" required>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="name" class="form-label">Tên sinh viên</label>
+            <input type="text" class="form-control" id="name" placeholder="Nhập tên đầy đủ" name="full_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="dob" class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" id="dob" name="dob" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="major" class="form-label">Ngành học</label>
+            <input type="text" class="form-control" id="major" placeholder="Nhập ngành học" name="major" required>
+        </div>';
+    include 'app/views/components/modal.php';
+    ?>
 
     <!-- Modal chỉnh sửa thông tin sinh viên -->
-    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editModalLabel">Sửa thông tin sinh viên</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="/app/controller/StudentController.php" method="post" id="editStudentForm">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="id" id="edit-id">
-                        <div class="mb-3">
-                            <label for="edit-student_code" class="form-label">Mã sinh viên</label>
-                            <input type="text" class="form-control" id="edit-student_code" name="student_code" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-full_name" class="form-label">Tên sinh viên</label>
-                            <input type="text" class="form-control" id="edit-full_name" name="full_name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-dob" class="form-label">Ngày sinh</label>
-                            <input type="date" class="form-control" id="edit-dob" name="dob" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="edit-email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-major" class="form-label">Ngành học</label>
-                            <input type="text" class="form-control" id="edit-major" name="major" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                    </div>
-                </form>
-            </div>
+    <?php
+    $modalId = "editStudentModal";
+    $modalLabelId = "editStudentModalLabel";
+    $modalTitle = "Sửa thông tin sinh viên";
+    $formAction = "/app/controller/StudentController.php";
+    $formId = "editStudentForm";
+    $formContent = '
+        <input type="hidden" name="action" value="update">
+        <input type="hidden" name="id" id="id">
+        <div class="mb-3">
+            <label for="student_code" class="form-label">Mã sinh viên</label>
+            <input type="text" class="form-control" id="student_code" name="student_code" required>
         </div>
-    </div>
-
+        <div class="mb-3">
+            <label for="full_name" class="form-label">Tên sinh viên</label>
+            <input type="text" class="form-control" id="full_name" name="full_name" required>
+        </div>
+        <div class="mb-3">
+            <label for="dob" class="form-label">Ngày sinh</label>
+            <input type="date" class="form-control" id="dob" name="dob" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="major" class="form-label">Ngành học</label>
+            <input type="text" class="form-control" id="major" name="major" required>
+        </div>';
+    include 'app/views/components/modal.php';
+    ?>
 </nav>

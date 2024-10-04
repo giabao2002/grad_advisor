@@ -7,7 +7,7 @@ require_once("app/views/components/header.php");
 // Mảng ánh xạ giữa các giá trị của tham số `page` và tên tiếng Việt tương ứng
 $page_titles = [
     'grades' => 'Quản lý điểm',
-    'subjects' => 'Quản lý môn học',
+    'courses' => 'Quản lý môn học',
     'students' => 'Quản lý sinh viên',
     'progress' => 'Quản lý cây tiến trình'
 ];
@@ -35,7 +35,7 @@ $page_titles = [
             <?php
             if (isset($_GET['page'])) {
                 $page = $_GET['page'];
-                $allowed_pages = ['grades', 'subjects', 'students', 'progress'];
+                $allowed_pages = ['grades', 'courses', 'students', 'progress'];
                 if (in_array($page, $allowed_pages)) {
                     require_once("app/views/pages/{$page}.php");
                 } else {

@@ -8,7 +8,7 @@
                     </a>
                 </li>
                 <li class="nav-item my-2">
-                    <a href="?page=subjects" class="nav-link text-truncate d-flex align-items-center">
+                    <a href="?page=courses" class="nav-link text-truncate d-flex align-items-center">
                         <i class="material-icons">book</i><span class="ms-1 d-none d-sm-inline fw-bold">Quản lý môn học</span> </a>
                 </li>
                 <li class="nav-item my-2">
