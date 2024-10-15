@@ -13,10 +13,10 @@ class CourseController
 
     public function index($limit, $offset)
     {
-        $query = "SELECT c.*, pre_c.course_name AS pre_course_name FROM courses c LEFT JOIN courses pre_c ON c.pre_course = pre_c.id LIMIT $limit OFFSET $offset";
+        $query = "SELECT c.*, pre_c.course_name AS pre_course_name FROM courses c LEFT JOIN courses pre_c ON c.pre_course = pre_c.id".(($limit !== null && $offset !== null)?" LIMIT $limit OFFSET $offset":"");
         $result = mysqli_query($this->conn, $query);
-        $courese = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        return $courese;
+        $courses = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return $courses;
     }
 
     public function count()

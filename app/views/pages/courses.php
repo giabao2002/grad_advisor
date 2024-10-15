@@ -28,14 +28,14 @@ if ($search && $search_by) {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    <form class="d-flex float-start" method="post">
+    <form class="d-flex float-start" method="post" style="height: 35px;">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập thông tin" aria-label="Search" required>
         <select class="form-select form-select-sm me-2" name="search_by">
             <option value="course_code" selected>Mã môn học</option>
             <option value="year">Năm học</option>
             <option value="credits">Số tín chỉ</option>
         </select>
-        <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
+        <button class="btn btn-outline-success" type="submit" style="width:200px;">Tìm kiếm</button>
     </form>
     <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="material-icons">add</i> Thêm môn học</button>
     <table class="table">
@@ -152,7 +152,7 @@ if ($search && $search_by) {
         <input type="hidden" name="action" value="update">
         <input type="hidden" name="id" id="id">
         <div class="mb-3">
-            <label for="student_code" class="form-label">Mã môn học</label>
+            <label for="course_code" class="form-label">Mã môn học</label>
             <input type="text" class="form-control" id="course_code" placeholder="Nhập mã môn học" name="course_code" required>
         </div>
         <div class="mb-3">

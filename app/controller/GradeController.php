@@ -1,0 +1,220 @@
+<?php
+require_once("/xampp/htdocs/core/db_connect.php");
+
+class GradeController
+{
+    private $conn;
+
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function index($limit, $offset, $course)
+    {
+        $query = "
+            SELECT s.full_name, g.*, JSON_UNQUOTE(JSON_EXTRACT(g.grade, '$.\"$course\"')) AS course_grade 
+            FROM grades g 
+            LEFT JOIN students s ON g.student_code = s.student_code 
+            WHERE JSON_CONTAINS_PATH(g.grade, 'one', '$.\"$course\"') 
+            LIMIT $offset, $limit
+        ";
+        $result = mysqli_query($this->conn, $query);
+        $grades = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        return $grades;
+    }
+
+    public function count()
+    {
+        $query = "SELECT COUNT(*) as total FROM courses";
+        $result = mysqli_query($this->conn, $query);
+        $row = mysqli_fetch_assoc($result);
+        return $row['total'];
+    }
+
+    public function store($data)
+    {
+        $student_code = $data['student_code'];
+        $courses = $data['courses'];
+        $grades = $data['grades'];
+
+        $student_query = "SELECT * FROM students WHERE student_code = '$student_code'";
+        $student_result = mysqli_query($this->conn, $student_query);
+
+        if (mysqli_num_rows($student_result) == 0) {
+            return "Mã sinh viên không tồn tại";
+        }
+
+        // Tạo mảng để lưu điểm dưới dạng JSON
+        $grades_json = [];
+        foreach ($courses as $index => $course_id) {
+            $grades_json[$course_id] = $grades[$index];
+        }
+        $grades_json = json_encode($grades_json);
+
+        // Kiểm tra xem sinh viên đã có trong danh sách hay chưa
+        $check_query = "
+            SELECT 
+                g.student_code, 
+                JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) AS course_grade,
+                c.course_code,
+                c.course_name
+            FROM grades g
+            JOIN courses c ON JSON_CONTAINS_PATH(g.grade, 'one', CONCAT('$.\"', c.course_code, '\"'))
+            WHERE g.student_code = '$student_code'
+        ";
+        $check_result = mysqli_query($this->conn, $check_query);
+
+        if ($check_result) {
+            $course = mysqli_fetch_assoc($check_result);
+            if ($course) {
+                // Tạo thông báo bao gồm tên môn học đầu tiên
+                $course_name = $course['course_name'];
+                $message = "Sinh viên đã có trong danh sách điểm môn học: $course_name, vui lòng truy cập danh sách để cập nhật điểm các môn học khác.";
+                return $message;
+            } else {
+                $insert_query = "INSERT INTO grades (student_code, grade) VALUES ('$student_code', '$grades_json')";
+                if (!mysqli_query($this->conn, $insert_query)) {
+                    return "Lỗi khi thêm điểm cho sinh viên";
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function update($id, $data)
+    {
+        $course_name = $data['course_name'];
+        $course_code = $data['course_code'];
+        $credits = $data['credits'];
+        $semester = $data['semester'] ? $data['semester'] : null;
+        $year = $data['year'] ? $data['year'] : null;
+        $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
+
+        if (!empty($pre_course)) {
+            $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
+            $pre_course_result = mysqli_query($this->conn, $pre_course_query);
+
+            if (mysqli_num_rows($pre_course_result) == 0) {
+                // pre_course không tồn tại
+                return "Môn học tiên quyết không tồn tại";
+            }
+        }
+        // Cập nhật thông tin môn học
+        if ($pre_course == null) {
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year' WHERE id=$id";
+        } else {
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year', pre_course='$pre_course' WHERE id=$id";
+        }
+        if (mysqli_query($this->conn, $query)) {
+            return true;
+        } else {
+            return "Chỉnh sửa thông tin môn học thất bại";
+        }
+    }
+
+    public function destroy($id, $course)
+    {
+        $check_query = "
+        SELECT JSON_LENGTH(grade) AS num_courses 
+        FROM grades 
+        WHERE id = $id
+        ";
+        $check_result = mysqli_query($this->conn, $check_query);
+        $row = mysqli_fetch_assoc($check_result);
+
+        if ($row['num_courses'] == 1) {
+            //Nếu chỉ có 1 môn học thì xóa cả
+            $delete_query = "DELETE FROM grades WHERE id = $id";
+            if (mysqli_query($this->conn, $delete_query)) {
+                return true;
+            } else {
+                return "Xóa không thành công!";
+            }
+        } else {
+            //Nếu không phải môn học duy nhất, chỉ xóa môn học và điểm của nó
+            $update_query = "
+            UPDATE grades 
+            SET grade = JSON_REMOVE(grade, '$.\"$course\"') 
+            WHERE id = $id
+            ";
+            if (mysqli_query($this->conn, $update_query)) {
+                return true;
+            } else {
+                return "Xóa môn học thất bại!";
+            }
+        }
+    }
+
+    public function search($search, $course_code)
+    {
+        $query = "
+        SELECT s.full_name, g.*, JSON_UNQUOTE(JSON_EXTRACT(g.grade, '$.\"$course_code\"')) AS course_grade 
+        FROM grades g 
+        LEFT JOIN students s ON g.student_code = s.student_code
+        WHERE 
+        g.student_code = '$search' AND
+        JSON_CONTAINS_PATH(grade, 'one', '$.\"$course_code\"')
+        ";
+
+        $result = mysqli_query($this->conn, $query);
+        if (mysqli_num_rows($result) > 0) {
+            $courses = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            return $courses;
+        } else {
+            return [];
+        }
+    }
+}
+
+// Khởi tạo controller
+$gradeController = new GradeController($conn);
+
+// Xử lý các request
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
+        switch ($_POST['action']) {
+            case 'store':
+                $data = [
+                    'student_code' => $_POST['student_code'],
+                    'courses' => $_POST['courses'],
+                    'grades' => $_POST['grades']
+                ];
+                $response = $gradeController->store($data);
+                if (gettype($response) == "string") {
+                    header("Location: /?page=grades&message=$response");
+                } else {
+                    header("Location: /?page=grades");
+                }
+                break;
+            case 'update':
+                $id = $_POST['id'];
+                $data = [
+                    'course_code' => $_POST['course_code'],
+                    'course_name' => $_POST['course_name'],
+                    'credits' => $_POST['credits'],
+                    'semester' => $_POST['semester'],
+                    'year' => $_POST['year'],
+                    'pre_course' => $_POST['pre_course']
+                ];
+                $response = $gradeController->update($id, $data);
+                if (gettype($response) == "string") {
+                    header("Location: /?page=courses&message=$response");
+                } else {
+                    header("Location: /?page=courses");
+                }
+                break;
+            case 'destroy':
+                $id = $_POST['id'];
+                $course = $_POST['course'];
+                $res = $gradeController->destroy($id, $course);
+                if (gettype($response) == "string") {
+                    header("Location: /?page=grades&message=$response");
+                } else {
+                    header("Location: /?page=grades");
+                }
+                break;
+        }
+    }
+}
