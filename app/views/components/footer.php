@@ -13,6 +13,9 @@
                 var student_code = button.getAttribute('data-student_code');
                 var full_name = button.getAttribute('data-full_name');
                 var dob = button.getAttribute('data-dob');
+                var identity = button.getAttribute('data-identity');
+                var address = button.getAttribute('data-address');
+                var gender = button.getAttribute('data-gender');
                 var email = button.getAttribute('data-email');
                 var major = button.getAttribute('data-major');
 
@@ -22,6 +25,9 @@
                 modal.querySelector('#student_code').value = student_code;
                 modal.querySelector('#full_name').value = full_name;
                 modal.querySelector('#dob').value = dob;
+                modal.querySelector('#identity').value = identity;
+                modal.querySelector('#address').value = address;
+                modal.querySelector('#gender').value = gender;
                 modal.querySelector('#email').value = email;
                 modal.querySelector('#major').value = major;
             });
@@ -55,11 +61,19 @@
         // Lấy khóa học đã chọn
         var courseSelect = document.getElementById('courseSelect');
 
-        courseSelect.addEventListener('change', function() {
+        courseSelect && courseSelect.addEventListener('change', function() {
             var selectedValue = courseSelect.value;
             console.log('Selected course ID:', selectedValue);
 
             window.location.href = '?page=grades&course=' + selectedValue;
+        });
+
+        var graduateSelect = document.getElementById('graduateSelect');
+
+        graduateSelect && graduateSelect.addEventListener('change', function() {
+            var selectedValue = graduateSelect.value;
+            console.log('Selected graduate ID:', selectedValue);
+            window.location.href = '?page=graduate&status=' + selectedValue;
         });
     });
 
@@ -67,7 +81,7 @@
     var addCourseButton = document.getElementById('addGradeButton');
     var gradeFieldsContainer = document.getElementById('gradeFieldsContainer');
 
-    addCourseButton.addEventListener('click', function() {
+    addCourseButton && addCourseButton.addEventListener('click', function() {
         // Tạo một hàng mới
         var row = document.createElement('div');
         row.className = 'row mb-2';
@@ -92,17 +106,18 @@
             .map(function(select) {
                 return select.value;
             });
-
         // Thêm các tùy chọn vào thẻ select
         <?php
         // Danh sách các môn học trong biến $courses
-        foreach ($courses as $course) {
-            echo "if (!selectedCourses.includes('{$course['course_code']}')) {";
-            echo "var option = document.createElement('option');";
-            echo "option.value = '{$course['course_code']}';";
-            echo "option.text = '{$course['course_name']}';";
-            echo "select.appendChild(option);";
-            echo "}";
+        if (isset($courses)) {
+            foreach ($courses as $course) {
+                echo "if (!selectedCourses.includes('{$course['course_code']}')) {";
+                echo "var option = document.createElement('option');";
+                echo "option.value = '{$course['course_code']}';";
+                echo "option.text = '{$course['course_name']}';";
+                echo "select.appendChild(option);";
+                echo "}";
+            }
         }
         ?>
         selectCol.appendChild(selectLabel);

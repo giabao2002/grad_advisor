@@ -18,9 +18,9 @@ AuthMiddleware::handle();
     <link rel="stylesheet" href="/app/styles/styles.css">
 </head>
 
-<body class="g-sidenav-show bg-gray-200">
+<body class="g-sidenav-show bg-light">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar navbar-expand-lg navbar-light position-static top-0">
             <div class="container-fluid">
                 <a class="navbar-brand text-white" href="/">Navbar</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">

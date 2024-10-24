@@ -9,12 +9,15 @@ $page_titles = [
     'grades' => 'Quản lý điểm',
     'courses' => 'Quản lý môn học',
     'students' => 'Quản lý sinh viên',
-    'progress' => 'Quản lý cây tiến trình'
+    'progress' => 'Quản lý cây tiến trình',
+    'detail' => 'Chi tiết sinh viên',
+    'certificate' => 'Danh sách văn bằng',
+    'graduate' => 'Xét tốt nghiệp'
 ];
 ?>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3">
+        <div class="col-3 p-0">
             <?php require_once("app/views/components/sidebar.php"); ?>
         </div>
         <div class="col-9 min-vh-100 py-3">
@@ -23,7 +26,13 @@ $page_titles = [
                 <ol class="breadcrumb">
                     <?php if (isset($_GET['page']) && array_key_exists($_GET['page'], $page_titles)): ?>
                         <li class="breadcrumb-item active" aria-current="page">
-                            <a href="?page=<?php echo $_GET['page'] ?>">
+                            <a href="?page=<?php
+                                            if ($_GET['page'] === 'detail') {
+                                                echo $_GET['page'] . '&student_code=' . $_GET['student_code'];
+                                            } else {
+                                                echo $_GET['page'];
+                                            }
+                                            ?>">
                                 <?php echo $page_titles[$_GET['page']]; ?>
                             </a>
                         </li>
@@ -35,13 +44,14 @@ $page_titles = [
             <?php
             if (isset($_GET['page'])) {
                 $page = $_GET['page'];
-                $allowed_pages = ['grades', 'courses', 'students', 'progress'];
+                $allowed_pages = ['grades', 'courses', 'students', 'progress', 'detail','graduate'];
                 if (in_array($page, $allowed_pages)) {
                     require_once("app/views/pages/{$page}.php");
                 } else {
                     echo "Page not found.";
                 }
             } else {
+                require_once("app/views/pages/intro.php");
             }
             ?>
         </div>

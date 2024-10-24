@@ -21,7 +21,7 @@ if ($search && $search_by) {
 }
 ?>
 
-<nav aria-label="Page navigation example">
+<nav aria-label="Page navigation">
     <?php if (isset($_GET['message'])): ?>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
             <?php echo $_GET['message']; ?>

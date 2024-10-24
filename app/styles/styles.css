@@ -6,14 +6,16 @@
 
 #sidebar {
   width: 280px;
-  border-right: 1px solid #c3c7c6;
   min-height: 100vh;
+  height: 100%;
+  box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
 }
 
-#sidebar .nav-item{
+#sidebar .nav-item {
   background-color: rgba(123, 193, 220, 0.3);
   width: 100%;
   border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 #sidebar .nav-item:hover {

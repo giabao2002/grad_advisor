@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 15, 2024 at 08:48 AM
+-- Generation Time: Oct 24, 2024 at 06:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,10 @@ CREATE TABLE `courses` (
 
 INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `semester`, `year`, `pre_course`) VALUES
 (6, 'CS1452', 'Toán rời rạc', 2, 1, 2023, 7),
-(7, 'CS1235', 'Đại số tuyến tính', 3, 2, 2022, NULL);
+(7, 'CS1235', 'Đại số tuyến tính', 3, 2, 2022, NULL),
+(10, 'CS1346', 'Xác suất thống kê', 3, 2, 2024, 7),
+(11, 'CS1652', 'Kinh tế học', 2, 3, 2024, 10),
+(12, 'CS1563', 'Nhập môn dữ liệu', 2, 1, 2023, NULL);
 
 -- --------------------------------------------------------
 
@@ -55,7 +58,9 @@ CREATE TABLE `grades` (
   `id` int(11) NOT NULL,
   `student_code` varchar(50) NOT NULL,
   `grade` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-  `status` enum('Đạt','Thi lại','Rớt') DEFAULT 'Đạt',
+  `language` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
+  `infomatic` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
+  `military` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -63,8 +68,8 @@ CREATE TABLE `grades` (
 -- Dumping data for table `grades`
 --
 
-INSERT INTO `grades` (`id`, `student_code`, `grade`, `status`, `created_at`) VALUES
-(6, 'KB156506', '{\"CS1452\": \"9\"}', 'Đạt', '2024-10-15 13:34:46');
+INSERT INTO `grades` (`id`, `student_code`, `grade`, `language`, `infomatic`, `military`, `created_at`) VALUES
+(8, '22004151', '{\"CS1452\":\"9\",\"CS1235\":\"9\",\"CS1346\":\"9\",\"CS1652\":\"9\",\"CS1563\":\"9\"}', 'Đạt', 'Đạt', 'Đạt', '2024-10-24 10:21:01');
 
 -- --------------------------------------------------------
 
@@ -76,9 +81,13 @@ CREATE TABLE `students` (
   `id` int(11) NOT NULL,
   `student_code` varchar(50) NOT NULL,
   `full_name` varchar(255) NOT NULL,
+  `identity` varchar(255) NOT NULL,
   `dob` date DEFAULT NULL,
+  `gender` enum('nam','nữ','khác') NOT NULL DEFAULT 'nam',
+  `address` varchar(255) NOT NULL,
   `major` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
+  `status` enum('Đang học','Thôi học','Đã tốt nghiệp','') DEFAULT 'Đang học',
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -86,19 +95,9 @@ CREATE TABLE `students` (
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `student_code`, `full_name`, `dob`, `major`, `email`, `created_at`) VALUES
-(1, 'KB156506', 'Nguyễn Minh Phương', '2024-10-03', 'Y dược', 'minhphuong@gmail.com', '2024-10-02 13:10:28'),
-(5, 'KB138921', 'Đỗ Phương Nam', '2024-10-04', 'Y Dược', 'phuongnam@gmail.com', '2024-10-02 13:26:30'),
-(6, 'KB155676', 'Nguyễn Đức Hải', '2024-10-10', 'Y Dược', 'hai@gmail.com', '2024-10-02 14:02:08'),
-(7, 'KB133554', 'Hà Như Yên', '2024-10-12', 'Y Dược', 'nhuyen@gmail.com', '2024-10-02 14:03:06'),
-(8, 'KB156435', 'Mai Đức Trung', '2024-10-11', 'Y Dược', 'trung@gmail.com', '2024-10-02 14:04:00'),
-(9, 'KB151532', 'Hoàng Hải Yến', '2024-10-04', 'Y Dược', 'haiyen@gmail.com', '2024-10-02 14:06:07'),
-(10, 'KB157622', 'Hoàng Như Quỳnh', '2024-10-01', 'Y Dược', 'hoangquynh@gmail.com', '2024-10-02 14:07:12'),
-(11, 'KB151324', 'Đỗ Mạnh Cường', '2024-10-09', 'Y Dược', 'cuongca@gmail.com', '2024-10-02 14:07:54'),
-(12, 'KB151623', 'Vũ Đức Minh', '2024-10-26', 'Y Dược', 'minhduc@gmail.com', '2024-10-02 14:08:37'),
-(13, 'KB162876', 'Vũ Minh Tuấn', '2024-10-09', 'Y Dược', 'tuan.minhtuan@gmail.com', '2024-10-02 14:12:26'),
-(14, 'KB159923', 'Mai Quỳnh Hương', '2024-10-12', 'Y Dược', 'huongne@gmail.com', '2024-10-02 14:13:10'),
-(15, 'KB135554', 'Đỗ Duy Phương', '2024-10-11', 'Y Dược', 'duyphuong@gmail.com', '2024-10-04 14:02:06');
+INSERT INTO `students` (`id`, `student_code`, `full_name`, `identity`, `dob`, `gender`, `address`, `major`, `email`, `status`, `created_at`) VALUES
+(17, '22004151', 'Võ Lê Minh', '86123456789', '2004-01-01', 'nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004151@st.vlute.edu.vn', 'Đang học', '2024-10-22 10:40:59'),
+(18, '22004152', 'Hồng Phạm Gia', '86123456789', '2004-01-01', 'nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004152@st.vlute.edu.vn', 'Đang học', '2024-10-22 14:11:47');
 
 -- --------------------------------------------------------
 
@@ -120,7 +119,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `email`, `created_at`) VALUES
-(1, 'Nguyễn Văn Minh', '123123', 'GV', 'nva@gmail.com', '2024-10-01 14:14:01');
+(1, 'Nguyễn Văn Minh', '123123', 'GV', 'nva@gmail.com', '2024-10-01 14:14:01'),
+(2, 'Vũ Thu Trà', '123123', 'CVHT', 'thutra@gmail.com', '2024-10-16 09:38:21');
 
 --
 -- Indexes for dumped tables
@@ -162,25 +162,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

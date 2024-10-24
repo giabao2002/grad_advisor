@@ -1,27 +1,32 @@
 <?php
-require_once "app/controller/StudentController.php";
-$studentController = new StudentController($conn);
+require_once "app/controller/GraduateController.php";
+$graduateController = new GraduateController($conn);
 
 // Lấy tham số trang hiện tại từ URL, mặc định là trang 1
 $page = isset($_GET['num']) ? (int)$_GET['num'] : 1;
 $page = max($page, 1);
 $limit = 10; // Số lượng sinh viên mỗi trang
 $offset = ($page - 1) * $limit;
+$status = $_GET['status'] ?? 1;
 
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 if ($search) {
-    $students = $studentController->show($search);
+    $students = $graduateController->show($search,$status);
     $total_students = count($students);
     $total_pages = 1;
 } else {
     //Lấy danh sách sinh viên và tổng số sinh viên
-    $students = $studentController->index($limit, $offset);
-    $total_students = $studentController->count();
+    $students = $graduateController->index($limit, $offset, $status);
+    $total_students = $graduateController->count();
     $total_pages = ceil($total_students / $limit);
 }
 ?>
 
 <nav aria-label="Page navigation example">
+    <select class="form-select form-select-sm mb-2" style="width: 385px;" name="course" id="graduateSelect">
+        <option value=1 <?php echo $status == 1??"selected";?>>Đủ điều kiện</option>
+        <option value=0 <?php echo $status? null:"selected";?>>Không đủ điều kiện</option>
+    </select>
     <form class="d-flex float-start" method="post">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập mã sinh viên" aria-label="Search" required>
         <button class="btn btn-outline-success mr-2" type="submit">Tìm kiếm</button>
@@ -29,6 +34,7 @@ if ($search) {
     <?php if ($_SESSION['auth_user']['role'] == 'GV'): ?>
         <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal"><i class="material-icons">add</i> Thêm sinh viên</button>
     <?php endif; ?>
+    <a type="button" class="btn btn-warning d-flex float-end me-2 text-white" href="/app/controller/ExportController.php?status=<?php echo $status; ?>"><i class="material-icons">file_download</i> Xuất</a>
     <table class="table">
         <thead>
             <tr>

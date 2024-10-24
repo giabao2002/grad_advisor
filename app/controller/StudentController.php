@@ -11,11 +11,15 @@ class StudentController
         $this->conn = $conn;
     }
 
-    public function index($limit, $offset)
-    {
-        $query = "SELECT * FROM students LIMIT $limit OFFSET $offset";
+    public function index($limit = PHP_INT_MAX, $offset = 0) {
+        $query = "SELECT * FROM students LIMIT $offset, $limit";
         $result = mysqli_query($this->conn, $query);
-        $students = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+        $students = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $students[] = $row;
+        }
+
         return $students;
     }
 
@@ -32,9 +36,12 @@ class StudentController
         $fullname = $data['full_name'];
         $email = $data['email'];
         $student_code = $data['student_code'];
+        $identity = $data['identity'];
+        $address = $data['address'];
+        $gender = $data['gender'];
         $dob = $data['dob'];
         $major = $data['major'];
-        $query = "INSERT INTO students (student_code,full_name, dob, major, email) VALUES ('$student_code','$fullname', '$dob', '$major', '$email')";
+        $query = "INSERT INTO students (student_code,full_name, dob, major, email, identity, address, gender) VALUES ('$student_code','$fullname', '$dob', '$major', '$email', '$identity', '$address', '$gender')";
         if (mysqli_query($this->conn, $query)) {
             return true;
         } else {
@@ -47,9 +54,12 @@ class StudentController
         $fullname = $data['full_name'];
         $email = $data['email'];
         $student_code = $data['student_code'];
+        $identity = $data['identity'];
+        $address = $data['address'];
+        $gender = $data['gender'];
         $dob = $data['dob'];
         $major = $data['major'];
-        $query = "UPDATE students SET full_name='$fullname', email='$email', student_code='$student_code', dob='$dob', major='$major' WHERE id=$id";
+        $query = "UPDATE students SET full_name='$fullname', email='$email', student_code='$student_code', dob='$dob', major='$major', identity='$identity', address='$address', gender='$gender' WHERE id=$id";
         if (mysqli_query($this->conn, $query)) {
             return true;
         } else {
@@ -91,6 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'student_code' => $_POST['student_code'],
                     'full_name' => $_POST['full_name'],
                     'email' => $_POST['email'],
+                    'identity' => $_POST['identity'],
+                    'address' => $_POST['address'],
+                    'gender' => $_POST['gender'],
                     'dob' => $_POST['dob'],
                     'major' => $_POST['major']
                 ];
@@ -103,6 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'student_code' => $_POST['student_code'],
                     'full_name' => $_POST['full_name'],
                     'email' => $_POST['email'],
+                    'identity' => $_POST['identity'],
+                    'address' => $_POST['address'],
+                    'gender' => $_POST['gender'],
                     'dob' => $_POST['dob'],
                     'major' => $_POST['major']
                 ];
