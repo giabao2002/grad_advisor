@@ -11,7 +11,7 @@ $status = $_GET['status'] ?? 1;
 
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 if ($search) {
-    $students = $graduateController->show($search,$status);
+    $students = $graduateController->show($search, $status);
     $total_students = count($students);
     $total_pages = 1;
 } else {
@@ -24,8 +24,8 @@ if ($search) {
 
 <nav aria-label="Page navigation example">
     <select class="form-select form-select-sm mb-2" style="width: 385px;" name="course" id="graduateSelect">
-        <option value=1 <?php echo $status == 1??"selected";?>>Đủ điều kiện</option>
-        <option value=0 <?php echo $status? null:"selected";?>>Không đủ điều kiện</option>
+        <option value=1 <?php echo $status == 1 ?? "selected"; ?>>Đủ điều kiện</option>
+        <option value=0 <?php echo $status ? null : "selected"; ?>>Không đủ điều kiện</option>
     </select>
     <form class="d-flex float-start" method="post">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập mã sinh viên" aria-label="Search" required>
@@ -39,12 +39,14 @@ if ($search) {
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">MSV</th>
+                <th scope="col">Mã SV</th>
                 <th scope="col">Họ tên</th>
+                <th scope="col">Phái</th>
                 <th scope="col">Ngày sinh</th>
+                <th scope="col">CCCD</th>
+                <th scope="col">Trạng thái</th>
                 <th scope="col">Email</th>
-                <th scope="col">Ngành học</th>
-                <th scope="col"></th>
+                <th scope="col">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -53,7 +55,10 @@ if ($search) {
                     <th scope="row"><?php echo $index + 1; ?></th>
                     <td><?php echo htmlspecialchars($student['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($student['full_name']); ?></td>
+                    <td><?php echo htmlspecialchars($student['gender']); ?></td>
                     <td><?php echo htmlspecialchars($student['dob']); ?></td>
+                    <td><?php echo htmlspecialchars($student['identity']); ?></td>
+                    <td><?php echo htmlspecialchars($student['status']); ?></td>
                     <td><?php echo htmlspecialchars($student['email']); ?></td>
                     <td><?php echo htmlspecialchars($student['major']); ?></td>
                     <td>
@@ -127,8 +132,8 @@ if ($search) {
         <div class="mb-3">
             <label for="gender" class="form-label">Giới tính</label>
             <select name="gender" id="gender" class="form-select" required>
-                <option value="nam" selected>Nam</option>
-                <option value="nữ">Nữ</option>
+                <option value="Nam" selected>Nam</option>
+                <option value="Nữ">Nữ</option>
                 <option value="khác">Khác</option>
             </select>
         </div>
@@ -176,8 +181,8 @@ if ($search) {
         <div class="mb-3">
             <label for="gender" class="form-label">Giới tính</label>
             <select name="gender" id="gender" class="form-select" required>
-                <option value="nam" selected>Nam</option>
-                <option value="nữ">Nữ</option>
+                <option value="Nam" selected>Nam</option>
+                <option value="Nữ">Nữ</option>
                 <option value="khác">Khác</option>
             </select>
         </div>

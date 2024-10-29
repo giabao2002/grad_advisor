@@ -29,16 +29,16 @@ class DetailController
 
         $result = mysqli_query($this->conn, $query);
         $row = mysqli_fetch_assoc($result);
-        // Lấy số môn học trong trường grade của bảng grades
+        // Lấy số học phần trong trường grade của bảng grades
         $grade_courses_count = $row['grades'] ? count(json_decode($row['grades'], true)) : 0;
 
-        // Lấy tổng số môn học của bảng courses
+        // Lấy tổng số học phần của bảng courses
         $courses_query = "SELECT COUNT(*) as total_courses FROM courses";
         $courses_result = mysqli_query($this->conn, $courses_query);
         $courses_row = mysqli_fetch_assoc($courses_result);
         $total_courses_count = $courses_row['total_courses'];
 
-        // Thêm số môn học vào biến $row
+        // Thêm số học phần vào biến $row
         $row['grade_courses_count'] = $grade_courses_count;
         $row['total_courses_count'] = $total_courses_count;
 
@@ -46,7 +46,7 @@ class DetailController
         $course_grade = [];
         if ($row['grades']) {
             $grades = json_decode($row['grades'], true);
-            // Lặp qua mảng grades để lấy thông tin môn học
+            // Lặp qua mảng grades để lấy thông tin học phần
             foreach ($grades as $course_code => $grade) {
                 $course_query = "SELECT course_name, credits FROM courses WHERE course_code = '$course_code'";
                 $course_result = mysqli_query($this->conn, $course_query);
@@ -117,7 +117,7 @@ class DetailController
             }
         }
 
-        // Tạo mảng để lưu trữ các đối tượng môn học của cây hoàn chỉnh
+        // Tạo mảng để lưu trữ các đối tượng học phần của cây hoàn chỉnh
         $coursesTree = [];
 
         // Xây dựng cấu trúc cây

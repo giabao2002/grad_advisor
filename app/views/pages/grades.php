@@ -10,13 +10,13 @@ $page = max($page, 1);
 $limit = 10; // Số lượng sinh viên mỗi trang
 $offset = ($page - 1) * $limit;
 
-// Lấy danh sách môn học
+// Lấy danh sách học phần
 $courses = $courseController->index($limit, $offset);
 $course = isset($_GET['course']) ? $_GET['course'] : '';
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 
 if ($search) {
-    $grades = $gradeController->search($search,$course);
+    $grades = $gradeController->search($search, $course);
     $total_courses = count($grades);
     $total_pages = 1;
 } else {
@@ -34,7 +34,7 @@ if ($search) {
         </div>
     <?php endif; ?>
     <select class="form-select form-select-sm mb-2" style="width: 385px;" name="course" id="courseSelect">
-        <option value=''>Chọn môn học</option>
+        <option value=''>Chọn học phần</option>
         <?php foreach ($courses as $c): ?>
             <option value="<?php echo $c['course_code']; ?>" <?php echo $course == $c['course_code'] ? 'selected' : ''; ?>>
                 <?php echo htmlspecialchars($c['course_name']); ?>
@@ -53,7 +53,8 @@ if ($search) {
                 <th scope="col">Mã sinh viên</th>
                 <th scope="col">Họ tên sinh viên</th>
                 <th scope="col">Điểm số</th>
-                <th scope="col"></th>
+                <th scope="col">Điểm chữ</th>
+                <th scope="col">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -63,6 +64,21 @@ if ($search) {
                     <td><?php echo htmlspecialchars($grade['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($grade['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($grade['course_grade']); ?></td>
+                    <td>
+                        <?php
+                        if ($grade['course_grade'] >= 9) {
+                            echo 'A';
+                        } elseif ($grade['course_grade'] >= 8) {
+                            echo 'B';
+                        } elseif ($grade['course_grade'] >= 6.5) {
+                            echo 'C';
+                        } elseif ($grade['course_grade'] >= 5) {
+                            echo 'D';
+                        } else {
+                            echo 'F';
+                        }
+                        ?>
+                    </td>
                     <td>
                         <form action="app/controller/GradeController.php" method="POST" style="display:inline;">
                             <input type="hidden" name="action" value="destroy">
@@ -88,7 +104,7 @@ if ($search) {
             <a class="page-link" href="?page=courses&num=<?php echo $page + 1; ?>">Sau</a>
         </li>
     </ul>
-    <!-- Modal thêm môn học -->
+    <!-- Modal thêm điểm học phần -->
     <?php
     $modalId = "addGradeModal";
     $modalLabelId = "addGradeModalLabel";
@@ -96,14 +112,24 @@ if ($search) {
     $formAction = "/app/controller/GradeController.php";
     $formId = "addGradeForm";
     $formContent = '
-        <input type="hidden" name="action" value="store">
-        <div class="mb-3 container">
-            <label for="student_code" class="form-label">Mã sinh viên</label>
-            <input type="text" class="form-control" id="student_id" placeholder="Nhập mã sinh viên" name="student_code" required>
-            <div id="gradeFieldsContainer" class="mt-2"></div>
-            <input class="btn btn-primary mt-2" type="button" value="+ Thêm môn học" id="addGradeButton"/>
-        </div>
-        ';
+    <input type="hidden" name="action" value="store">
+    <div class="mb-3 container">
+        <label for="student_code" class="form-label">Mã sinh viên</label>
+        <input type="text" class="form-control" id="student_id" placeholder="Nhập mã sinh viên" name="student_code" required>
+        <div id="gradeFieldsContainer" class="mt-2"></div>
+        <input class="btn btn-primary mt-2" type="button" value="+ Thêm học phần" id="addGradeButton"/>
+    </div>
+    ';
     include 'app/views/components/modal.php';
     ?>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Đặt lại form khi modal bị đóng
+        $('#<?php echo $modalId; ?>').on('hidden.bs.modal', function() {
+            $('#<?php echo $formId; ?>')[0].reset();
+            $('#gradeFieldsContainer').empty(); // Xóa các trường điểm đã thêm
+        });
+    });
+</script>

@@ -69,7 +69,7 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Môn học</th>
+                        <th scope="col">Học phần</th>
                         <th scope="col">Điểm hệ số 10</th>
                         <!-- <th scope="col">Điểm hệ số 4</th> -->
                         <th scope="col">Điểm chữ</th>

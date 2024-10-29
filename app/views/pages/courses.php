@@ -31,23 +31,21 @@ if ($search && $search_by) {
     <form class="d-flex float-start" method="post" style="height: 35px;">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập thông tin" aria-label="Search" required>
         <select class="form-select form-select-sm me-2" name="search_by">
-            <option value="course_code" selected>Mã môn học</option>
-            <option value="year">Năm học</option>
+            <option value="course_code" selected>Mã học phần</option>
             <option value="credits">Số tín chỉ</option>
         </select>
         <button class="btn btn-outline-success" type="submit" style="width:200px;">Tìm kiếm</button>
     </form>
-    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="material-icons">add</i> Thêm môn học</button>
+    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="material-icons">add</i> Thêm học phần</button>
     <table class="table">
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Mã môn học</th>
-                <th scope="col">Tên môn học</th>
+                <th scope="col">Mã học phần</th>
+                <th scope="col">Tên học phần</th>
                 <th scope="col">Số tín chỉ</th>
-                <th scope="col">Học kỳ</th>
-                <th scope="col">Năm học</th>
-                <th scope="col">Môn học tiên quyết</th>
+                <th scope="col">Tùy chọn</th>
+                <th scope="col">Học phần tiên quyết</th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -58,8 +56,7 @@ if ($search && $search_by) {
                     <td><?php echo htmlspecialchars($course['course_code']); ?></td>
                     <td><?php echo htmlspecialchars($course['course_name']); ?></td>
                     <td><?php echo htmlspecialchars($course['credits']); ?></td>
-                    <td><?php echo htmlspecialchars($course['semester']); ?></td>
-                    <td><?php echo htmlspecialchars($course['year']); ?></td>
+                    <td><?php echo $course['optional']; ?></td>
                     <td><?php echo htmlspecialchars($course['pre_course_name']); ?></td>
                     <td>
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal"
@@ -67,8 +64,7 @@ if ($search && $search_by) {
                             data-course_code="<?php echo htmlspecialchars($course['course_code']); ?>"
                             data-course_name="<?php echo htmlspecialchars($course['course_name']); ?>"
                             data-credits="<?php echo htmlspecialchars($course['credits']); ?>"
-                            data-semester="<?php echo htmlspecialchars($course['semester']); ?>"
-                            data-year="<?php echo htmlspecialchars($course['year']); ?>"
+                            data-optional="<?php echo $course['optional']; ?>"
                             data-pre_course="<?php echo htmlspecialchars($course['pre_course']); ?>">
                             <i class="material-icons">edit</i>
                         </button>
@@ -95,41 +91,40 @@ if ($search && $search_by) {
             <a class="page-link" href="?page=courses&num=<?php echo $page + 1; ?>">Sau</a>
         </li>
     </ul>
-    <!-- Modal thêm môn học -->
+    <!-- Modal thêm học phần -->
     <?php
     $modalId = "addCourseModal";
     $modalLabelId = "addCourseModalLabel";
-    $modalTitle = "Thêm môn học";
+    $modalTitle = "Thêm học phần";
     $formAction = "/app/controller/CourseController.php";
     $formId = "addCourseForm";
-    $options = '<option value="">Chọn môn học tiên quyết</option>';
+    $options = '<option value="">Chọn học phần tiên quyết</option>';
     foreach ($courses as $course) {
         $options .= '<option value="' . $course['id'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
     }
     $formContent = '
         <input type="hidden" name="action" value="store">
         <div class="mb-3">
-            <label for="student_code" class="form-label">Mã môn học</label>
-            <input type="text" class="form-control" id="course_code" placeholder="Nhập mã môn học" name="course_code" required>
+            <label for="student_code" class="form-label">Mã học phần</label>
+            <input type="text" class="form-control" id="course_code" placeholder="Nhập mã học phần" name="course_code" required>
         </div>
         <div class="mb-3">
-            <label for="course_name" class="form-label">Tên môn học</label>
-            <input type="text" class="form-control" id="course_name" placeholder="Nhập tên môn học" name="course_name" required>
+            <label for="course_name" class="form-label">Tên học phần</label>
+            <input type="text" class="form-control" id="course_name" placeholder="Nhập tên học phần" name="course_name" required>
         </div>
         <div class="mb-3">
             <label for="credits" class="form-label">Số tín chỉ</label>
             <input type="number" class="form-control" id="credits" name="credits" required>
         </div>
         <div class="mb-3">
-            <label for="semester" class="form-label">Kỳ học</label>
-            <input type="number" class="form-control" id="semester" placeholder="Nhập kỳ học" name="semester">
+            <label for="optional" class="form-label">Tùy chọn</label>
+            <select class="form-control" id="optional" name="optional">
+                <option value="Bắt buộc" selected>Bắt buộc</option>
+                <option value="Tự chọn">Tự chọn</option>
+            </select>
         </div>
         <div class="mb-3">
-            <label for="year" class="form-label">Năm học</label>
-            <input type="number" class="form-control" id="year" placeholder="Nhập năm học" name="year">
-        </div>
-        <div class="mb-3">
-        <label for="pre_course" class="form-label">Môn học tiên quyết</label>
+            <label for="pre_course" class="form-label">Học phần tiên quyết</label>
             <select class="form-control" id="pre_course" name="pre_course">
                 ' . $options . '
             </select>
@@ -137,14 +132,14 @@ if ($search && $search_by) {
     include 'app/views/components/modal.php';
     ?>
 
-    <!-- Modal chỉnh sửa thông tin môn học -->
+    <!-- Modal chỉnh sửa thông tin học phần -->
     <?php
     $modalId = "editCourseModal";
     $modalLabelId = "editCourseModalLabel";
-    $modalTitle = "Sửa thông tin môn học";
+    $modalTitle = "Sửa thông tin học phần";
     $formAction = "/app/controller/CourseController.php";
     $formId = "editCourseForm";
-    $options = '<option value="">Chọn môn học tiên quyết</option>';
+    $options = '<option value="">Chọn học phần tiên quyết</option>';
     foreach ($courses as $course) {
         $options .= '<option value="' . $course['id'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
     }
@@ -152,27 +147,26 @@ if ($search && $search_by) {
         <input type="hidden" name="action" value="update">
         <input type="hidden" name="id" id="id">
         <div class="mb-3">
-            <label for="course_code" class="form-label">Mã môn học</label>
-            <input type="text" class="form-control" id="course_code" placeholder="Nhập mã môn học" name="course_code" required>
+            <label for="course_code" class="form-label">Mã học phần</label>
+            <input type="text" class="form-control" id="course_code" placeholder="Nhập mã học phần" name="course_code" required>
         </div>
         <div class="mb-3">
-            <label for="course_name" class="form-label">Tên môn học</label>
-            <input type="text" class="form-control" id="course_name" placeholder="Nhập tên môn học" name="course_name" required>
+            <label for="course_name" class="form-label">Tên học phần</label>
+            <input type="text" class="form-control" id="course_name" placeholder="Nhập tên học phần" name="course_name" required>
         </div>
         <div class="mb-3">
             <label for="credits" class="form-label">Số tín chỉ</label>
             <input type="number" class="form-control" id="credits" name="credits" required>
         </div>
         <div class="mb-3">
-            <label for="semester" class="form-label">Kỳ học</label>
-            <input type="number" class="form-control" id="semester" placeholder="Nhập kỳ học" name="semester">
+            <label for="optional" class="form-label">Tùy chọn</label>
+            <select class="form-control" id="optional" name="optional">
+                <option value="Bắt buộc">Bắt buộc</option>
+                <option value="Tự chọn">Tự chọn</option>
+            </select>
         </div>
         <div class="mb-3">
-            <label for="year" class="form-label">Năm học</label>
-            <input type="number" class="form-control" id="year" placeholder="Nhập năm học" name="year">
-        </div>
-        <div class="mb-3">
-        <label for="pre_course" class="form-label">Môn học tiên quyết</label>
+            <label for="pre_course" class="form-label">học phần tiên quyết</label>
             <select class="form-control" id="pre_course" name="pre_course">
                 ' . $options . '
             </select>

@@ -7,7 +7,7 @@ require_once("app/views/components/header.php");
 // Mảng ánh xạ giữa các giá trị của tham số `page` và tên tiếng Việt tương ứng
 $page_titles = [
     'grades' => 'Quản lý điểm',
-    'courses' => 'Quản lý môn học',
+    'courses' => 'Quản lý học phần',
     'students' => 'Quản lý sinh viên',
     'progress' => 'Quản lý cây tiến trình',
     'detail' => 'Chi tiết sinh viên',

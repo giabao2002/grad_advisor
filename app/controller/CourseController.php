@@ -32,17 +32,16 @@ class CourseController
         $course_name = $data['course_name'];
         $course_code = $data['course_code'];
         $credits = $data['credits'];
-        $semester = $data['semester'] ? $data['semester'] : null;
-        $year = $data['year'] ? $data['year'] : null;
+        $optional = $data['optional'] ? $data['optional'] : null;
         $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
 
-        // Kiểm tra xem môn học đã tồn tại hay chưa
+        // Kiểm tra xem học phần đã tồn tại hay chưa
         $check_query = "SELECT * FROM courses WHERE course_code = '$course_code' OR course_name = '$course_name'";
         $result = mysqli_query($this->conn, $check_query);
 
         if (mysqli_num_rows($result) > 0) {
-            // Môn học đã tồn tại
-            return "Môn học đã tồn tại";
+            // học phần đã tồn tại
+            return "học phần đã tồn tại";
         } else {
             if (!empty($pre_course)) {
                 $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
@@ -50,19 +49,19 @@ class CourseController
 
                 if (mysqli_num_rows($pre_course_result) == 0) {
                     // pre_course không tồn tại
-                    return "Môn học tiên quyết không tồn tại";
+                    return "học phần tiên quyết không tồn tại";
                 }
             }
-            // Thêm mới môn học
+            // Thêm mới học phần
             if ($pre_course == null) {
-                $query = "INSERT INTO courses (course_code, course_name, credits, semester, year) VALUES ('$course_code', '$course_name', '$credits', '$semester', '$year')";
+                $query = "INSERT INTO courses (course_code, course_name, credits, optional) VALUES ('$course_code', '$course_name', '$credits', '$optional')";
             } else {
-                $query = "INSERT INTO courses (course_code, course_name, credits, semester, year, pre_course) VALUES ('$course_code', '$course_name', '$credits', '$semester', '$year', '$pre_course')";
+                $query = "INSERT INTO courses (course_code, course_name, credits, optional, pre_course) VALUES ('$course_code', '$course_name', '$credits', '$optional', '$pre_course')";
             }
             if (mysqli_query($this->conn, $query)) {
                 return true;
             } else {
-                return "Thêm môn học thất bại";
+                return "Thêm học phần thất bại";
             }
         }
     }
@@ -72,8 +71,7 @@ class CourseController
         $course_name = $data['course_name'];
         $course_code = $data['course_code'];
         $credits = $data['credits'];
-        $semester = $data['semester'] ? $data['semester'] : null;
-        $year = $data['year'] ? $data['year'] : null;
+        $optional = $data['optional'] ? $data['optional'] : null;
         $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
 
         if (!empty($pre_course)) {
@@ -82,19 +80,19 @@ class CourseController
 
             if (mysqli_num_rows($pre_course_result) == 0) {
                 // pre_course không tồn tại
-                return "Môn học tiên quyết không tồn tại";
+                return "học phần tiên quyết không tồn tại";
             }
         }
-        // Cập nhật thông tin môn học
+        // Cập nhật thông tin học phần
         if ($pre_course == null) {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year' WHERE id=$id";
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional' WHERE id=$id";
         } else {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year', pre_course='$pre_course' WHERE id=$id";
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional', pre_course='$pre_course' WHERE id=$id";
         }
         if (mysqli_query($this->conn, $query)) {
             return true;
         } else {
-            return "Chỉnh sửa thông tin môn học thất bại";
+            return "Chỉnh sửa thông tin học phần thất bại";
         }
     }
 
@@ -139,8 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'course_code' => $_POST['course_code'],
                     'course_name' => $_POST['course_name'],
                     'credits' => $_POST['credits'],
-                    'semester' => $_POST['semester'],
-                    'year' => $_POST['year'],
+                    'optional' => $_POST['optional'],
                     'pre_course' => $_POST['pre_course']
                 ];
                 $response = $courseController->store($data);
@@ -156,8 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'course_code' => $_POST['course_code'],
                     'course_name' => $_POST['course_name'],
                     'credits' => $_POST['credits'],
-                    'semester' => $_POST['semester'],
-                    'year' => $_POST['year'],
+                    'optional' => $_POST['optional'],
                     'pre_course' => $_POST['pre_course']
                 ];
                 $response = $courseController->update($id, $data);

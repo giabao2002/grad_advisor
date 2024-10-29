@@ -33,7 +33,7 @@
             });
         }
 
-        // Mở modal edit của page quản lý môn học
+        // Mở modal edit của page quản lý học phần
         var editCourseModal = document.getElementById('editCourseModal');
         if (editCourseModal) {
             editCourseModal.addEventListener('show.bs.modal', function(event) {
@@ -41,9 +41,8 @@
                 var id = button.getAttribute('data-id');
                 var course_code = button.getAttribute('data-course_code');
                 var course_name = button.getAttribute('data-course_name');
-                var semester = button.getAttribute('data-semester');
+                var optional = button.getAttribute('data-optional');
                 var credits = button.getAttribute('data-credits');
-                var year = button.getAttribute('data-year');
                 var pre_course = button.getAttribute('data-pre_course');
 
                 // Điền thông tin vào các trường trong form
@@ -51,9 +50,9 @@
                 modal.querySelector('#id').value = id;
                 modal.querySelector('#course_code').value = course_code;
                 modal.querySelector('#course_name').value = course_name;
-                modal.querySelector('#semester').value = semester;
-                modal.querySelector('#year').value = year;
                 modal.querySelector('#credits').value = credits;
+                modal.querySelector('#optional').value = optional;
+                modal.querySelector('#optional').checked = optional == 1;
                 modal.querySelector('#pre_course').value = pre_course;
             });
         }
@@ -75,6 +74,16 @@
             console.log('Selected graduate ID:', selectedValue);
             window.location.href = '?page=graduate&status=' + selectedValue;
         });
+
+        var modal = document.getElementById('<?php echo $modalId; ?>');
+        var form = document.getElementById('<?php echo $formId; ?>');
+        var gradeFieldsContainer = document.getElementById('gradeFieldsContainer');
+
+        // Đặt lại form khi modal bị đóng
+        modal.addEventListener('hidden.bs.modal', function() {
+            form.reset();
+            gradeFieldsContainer.innerHTML = ''; // Xóa các trường điểm đã thêm
+        });
     });
 
     //Thêm input form quản lý điểm
@@ -88,27 +97,27 @@
 
         // Tạo cột cho thẻ select và label
         var selectCol = document.createElement('div');
-        selectCol.className = 'col-6';
+        selectCol.className = 'col-5';
 
         // Tạo label cho thẻ select
         var selectLabel = document.createElement('label');
-        selectLabel.textContent = 'Chọn môn học';
+        selectLabel.textContent = 'Chọn học phần';
         selectLabel.className = 'form-label';
 
-        // Tạo thẻ select cho môn học
+        // Tạo thẻ select cho học phần
         var select = document.createElement('select');
         select.className = 'form-control';
         select.name = 'courses[]';
         select.required = true;
 
-        // Lấy danh sách các môn học đã được chọn
+        // Lấy danh sách các học phần đã được chọn
         var selectedCourses = Array.from(document.querySelectorAll('select[name="courses[]"]'))
             .map(function(select) {
                 return select.value;
             });
         // Thêm các tùy chọn vào thẻ select
         <?php
-        // Danh sách các môn học trong biến $courses
+        // Danh sách các học phần trong biến $courses
         if (isset($courses)) {
             foreach ($courses as $course) {
                 echo "if (!selectedCourses.includes('{$course['course_code']}')) {";
@@ -125,7 +134,7 @@
 
         // Tạo cột cho thẻ input và label
         var inputCol = document.createElement('div');
-        inputCol.className = 'col-6';
+        inputCol.className = 'col-5';
 
         // Tạo label cho thẻ input
         var inputLabel = document.createElement('label');
@@ -143,9 +152,27 @@
         inputCol.appendChild(inputLabel);
         inputCol.appendChild(input);
 
+        // Tạo cột cho nút xóa
+        var deleteCol = document.createElement('div');
+        deleteCol.className = 'col-2 d-flex align-items-end';
+
+        // Tạo nút xóa
+        var deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.textContent = 'Xóa';
+
+        // Gắn sự kiện click cho nút xóa
+        deleteButton.addEventListener('click', function() {
+            gradeFieldsContainer.removeChild(row);
+        });
+
+        deleteCol.appendChild(deleteButton);
+
         // Thêm các cột vào hàng
         row.appendChild(selectCol);
         row.appendChild(inputCol);
+        row.appendChild(deleteCol);
 
         // Thêm hàng vào container
         gradeFieldsContainer.appendChild(row);

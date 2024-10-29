@@ -33,12 +33,14 @@ if ($search) {
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">MSV</th>
+                <th scope="col">Mã SV</th>
                 <th scope="col">Họ tên</th>
+                <th scope="col">Phái</th>
                 <th scope="col">Ngày sinh</th>
+                <th scope="col">CCCD</th>
+                <th scope="col">Trạng thái</th>
                 <th scope="col">Email</th>
-                <th scope="col">Ngành học</th>
-                <th scope="col"></th>
+                <th scope="col">Thao tác</th>
             </tr>
         </thead>
         <tbody>
@@ -47,9 +49,11 @@ if ($search) {
                     <th scope="row"><?php echo $index + 1; ?></th>
                     <td><?php echo htmlspecialchars($student['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($student['full_name']); ?></td>
-                    <td><?php echo htmlspecialchars($student['dob']); ?></td>
+                    <td><?php echo htmlspecialchars($student['gender']); ?></td>
+                    <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($student['dob']))); ?></td>
+                    <td><?php echo htmlspecialchars($student['identity']); ?></td>
+                    <td><?php echo htmlspecialchars($student['status']); ?></td>
                     <td><?php echo htmlspecialchars($student['email']); ?></td>
-                    <td><?php echo htmlspecialchars($student['major']); ?></td>
                     <td>
                         <?php if ($_SESSION['auth_user']['role'] == 'GV'): ?>
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"
@@ -121,8 +125,8 @@ if ($search) {
         <div class="mb-3">
             <label for="gender" class="form-label">Giới tính</label>
             <select name="gender" id="gender" class="form-select" required>
-                <option value="nam" selected>Nam</option>
-                <option value="nữ">Nữ</option>
+                <option value="Nam" selected>Nam</option>
+                <option value="Nữ">Nữ</option>
                 <option value="khác">Khác</option>
             </select>
         </div>
@@ -170,8 +174,8 @@ if ($search) {
         <div class="mb-3">
             <label for="gender" class="form-label">Giới tính</label>
             <select name="gender" id="gender" class="form-select" required>
-                <option value="nam" selected>Nam</option>
-                <option value="nữ">Nữ</option>
+                <option value="Nam" selected>Nam</option>
+                <option value="Nữ">Nữ</option>
                 <option value="khác">Khác</option>
             </select>
         </div>

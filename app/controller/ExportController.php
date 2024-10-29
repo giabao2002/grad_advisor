@@ -12,7 +12,7 @@ $students = $graduate->index( PHP_INT_MAX, 0,$status);
 
 // Chuyển đổi dữ liệu trong biến $students cho phù hợp với định dạng của biến $data
 $data = [
-    ['Mã sinh viên', 'Họ tên', 'Giới tính', 'Ngày Sinh', 'Email','Địa chỉ', 'Ngành học', 'CCCD/CMND', 'Tình trạng']
+    ['Mã sinh viên', 'Họ tên', 'Giới tính', 'Ngày Sinh', 'Email','Địa chỉ', 'Ngành học', 'CCCD/CMND', 'Tình trạng','Điều kiện tốt nghiệp' ]
 ];
 
 foreach ($students as $student) {
@@ -25,8 +25,13 @@ foreach ($students as $student) {
         $student['address'],
         $student['major'],
         $student['identity'],
-        $student['status']
+        $student['status'],
     ];
+    if($status == "1"){
+        $data[count($data) - 1][] = "Đủ điều kiện";
+    }else{
+        $data[count($data) - 1][] = "Chưa đủ điều kiện";
+    }
 }
 
 // Tạo file Excel từ dữ liệu

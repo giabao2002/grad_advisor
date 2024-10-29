@@ -10,7 +10,7 @@
             <?php if ($_SESSION['auth_user']['role'] == 'GV'): ?>
                 <li class="nav-item my-2">
                     <a href="?page=courses" class="nav-link text-truncate d-flex align-items-center">
-                        <i class="material-icons">book</i><span class="ms-1 d-none d-sm-inline fw-bold">Quản lý môn học</span> </a>
+                        <i class="material-icons">book</i><span class="ms-1 d-none d-sm-inline fw-bold">Quản lý học phần</span> </a>
                 </li>
                 <li class="nav-item my-2">
                     <a href="?page=grades" class="nav-link text-truncate d-flex align-items-center">

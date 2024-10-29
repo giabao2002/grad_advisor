@@ -37,21 +37,21 @@ class GradeController
         $student_code = $data['student_code'];
         $courses = $data['courses'];
         $grades = $data['grades'];
-
+    
         $student_query = "SELECT * FROM students WHERE student_code = '$student_code'";
         $student_result = mysqli_query($this->conn, $student_query);
-
+    
         if (mysqli_num_rows($student_result) == 0) {
             return "Mã sinh viên không tồn tại";
         }
-
+    
         // Tạo mảng để lưu điểm dưới dạng JSON
         $grades_json = [];
         foreach ($courses as $index => $course_id) {
             $grades_json[$course_id] = $grades[$index];
         }
         $grades_json = json_encode($grades_json);
-
+    
         // Kiểm tra xem sinh viên đã có trong danh sách hay chưa
         $check_query = "
             SELECT 
@@ -64,54 +64,40 @@ class GradeController
             WHERE g.student_code = '$student_code'
         ";
         $check_result = mysqli_query($this->conn, $check_query);
-
+    
         if ($check_result) {
-            $course = mysqli_fetch_assoc($check_result);
-            if ($course) {
-                // Tạo thông báo bao gồm tên môn học đầu tiên
-                $course_name = $course['course_name'];
-                $message = "Sinh viên đã có trong danh sách điểm môn học: $course_name, vui lòng truy cập danh sách để cập nhật điểm các môn học khác.";
-                return $message;
-            } else {
+            $existing_grades = [];
+            while ($row = mysqli_fetch_assoc($check_result)) {
+                $existing_grades[$row['course_code']] = $row['course_grade'];
+            }
+    
+            foreach ($courses as $index => $course_id) {
+                if (isset($existing_grades[$course_id])) {
+                    // Nếu đã có điểm cho học phần này, bỏ qua việc thêm hoặc cập nhật
+                    return "Điểm cho học phần đã có, không thể sửa!";
+                }
+    
+                // Nếu chưa có điểm cho học phần này, thêm hoặc cập nhật điểm
+                $update_query = "
+                    UPDATE grades 
+                    SET grade = JSON_SET(grade, '$.\"$course_id\"', '$grades[$index]') 
+                    WHERE student_code = '$student_code'
+                ";
+                if (!mysqli_query($this->conn, $update_query)) {
+                    return "Lỗi khi cập nhật điểm cho sinh viên";
+                }
+            }
+    
+            // Nếu không có học phần nào cần cập nhật, trả về thông báo
+            if (empty($existing_grades)) {
                 $insert_query = "INSERT INTO grades (student_code, grade) VALUES ('$student_code', '$grades_json')";
                 if (!mysqli_query($this->conn, $insert_query)) {
                     return "Lỗi khi thêm điểm cho sinh viên";
                 }
             }
         }
-
+    
         return true;
-    }
-
-    public function update($id, $data)
-    {
-        $course_name = $data['course_name'];
-        $course_code = $data['course_code'];
-        $credits = $data['credits'];
-        $semester = $data['semester'] ? $data['semester'] : null;
-        $year = $data['year'] ? $data['year'] : null;
-        $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
-
-        if (!empty($pre_course)) {
-            $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
-            $pre_course_result = mysqli_query($this->conn, $pre_course_query);
-
-            if (mysqli_num_rows($pre_course_result) == 0) {
-                // pre_course không tồn tại
-                return "Môn học tiên quyết không tồn tại";
-            }
-        }
-        // Cập nhật thông tin môn học
-        if ($pre_course == null) {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year' WHERE id=$id";
-        } else {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', semester='$semester', year='$year', pre_course='$pre_course' WHERE id=$id";
-        }
-        if (mysqli_query($this->conn, $query)) {
-            return true;
-        } else {
-            return "Chỉnh sửa thông tin môn học thất bại";
-        }
     }
 
     public function destroy($id, $course)
@@ -125,7 +111,7 @@ class GradeController
         $row = mysqli_fetch_assoc($check_result);
 
         if ($row['num_courses'] == 1) {
-            //Nếu chỉ có 1 môn học thì xóa cả
+            //Nếu chỉ có 1 học phần thì xóa cả
             $delete_query = "DELETE FROM grades WHERE id = $id";
             if (mysqli_query($this->conn, $delete_query)) {
                 return true;
@@ -133,7 +119,7 @@ class GradeController
                 return "Xóa không thành công!";
             }
         } else {
-            //Nếu không phải môn học duy nhất, chỉ xóa môn học và điểm của nó
+            //Nếu không phải học phần duy nhất, chỉ xóa học phần và điểm của nó
             $update_query = "
             UPDATE grades 
             SET grade = JSON_REMOVE(grade, '$.\"$course\"') 
@@ -142,7 +128,7 @@ class GradeController
             if (mysqli_query($this->conn, $update_query)) {
                 return true;
             } else {
-                return "Xóa môn học thất bại!";
+                return "Xóa học phần thất bại!";
             }
         }
     }
@@ -186,23 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: /?page=grades&message=$response");
                 } else {
                     header("Location: /?page=grades");
-                }
-                break;
-            case 'update':
-                $id = $_POST['id'];
-                $data = [
-                    'course_code' => $_POST['course_code'],
-                    'course_name' => $_POST['course_name'],
-                    'credits' => $_POST['credits'],
-                    'semester' => $_POST['semester'],
-                    'year' => $_POST['year'],
-                    'pre_course' => $_POST['pre_course']
-                ];
-                $response = $gradeController->update($id, $data);
-                if (gettype($response) == "string") {
-                    header("Location: /?page=courses&message=$response");
-                } else {
-                    header("Location: /?page=courses");
                 }
                 break;
             case 'destroy':

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 24, 2024 at 06:35 AM
+-- Generation Time: Oct 29, 2024 at 03:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,8 +32,7 @@ CREATE TABLE `courses` (
   `course_code` varchar(50) NOT NULL,
   `course_name` varchar(255) NOT NULL,
   `credits` int(11) NOT NULL,
-  `semester` int(11) DEFAULT NULL,
-  `year` int(11) DEFAULT NULL,
+  `optional` enum('Bắt buộc','Tự chọn') DEFAULT 'Bắt buộc',
   `pre_course` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -41,12 +40,13 @@ CREATE TABLE `courses` (
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `semester`, `year`, `pre_course`) VALUES
-(6, 'CS1452', 'Toán rời rạc', 2, 1, 2023, 7),
-(7, 'CS1235', 'Đại số tuyến tính', 3, 2, 2022, NULL),
-(10, 'CS1346', 'Xác suất thống kê', 3, 2, 2024, 7),
-(11, 'CS1652', 'Kinh tế học', 2, 3, 2024, 10),
-(12, 'CS1563', 'Nhập môn dữ liệu', 2, 1, 2023, NULL);
+INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `optional`, `pre_course`) VALUES
+(6, 'CS1452', 'Toán rời rạc', 2, 'Bắt buộc', 7),
+(7, 'CS1235', 'Đại số tuyến tính', 3, 'Bắt buộc', NULL),
+(10, 'CS1346', 'Xác suất thống kê', 3, 'Bắt buộc', 7),
+(11, 'CS1652', 'Kinh tế học', 2, 'Tự chọn', 10),
+(12, 'CS1563', 'Nhập môn dữ liệu', 2, 'Bắt buộc', NULL),
+(13, 'CT2101', 'Triết học Mác-Lênin', 3, 'Bắt buộc', NULL);
 
 -- --------------------------------------------------------
 
@@ -69,7 +69,8 @@ CREATE TABLE `grades` (
 --
 
 INSERT INTO `grades` (`id`, `student_code`, `grade`, `language`, `infomatic`, `military`, `created_at`) VALUES
-(8, '22004151', '{\"CS1452\":\"9\",\"CS1235\":\"9\",\"CS1346\":\"9\",\"CS1652\":\"9\",\"CS1563\":\"9\"}', 'Đạt', 'Đạt', 'Đạt', '2024-10-24 10:21:01');
+(10, '22004151', '{\"CS1235\": \"5\", \"CS1346\": \"6\", \"CS1652\": \"7\", \"CS1563\": \"8\", \"CS1452\": \"8\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-10-26 22:13:33'),
+(11, '22004152', '{\"CS1346\": \"9\", \"CS1652\": \"8\", \"CS1563\": \"9\", \"CS1452\": \"9\", \"CS1235\": \"10\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-10-28 09:49:44');
 
 -- --------------------------------------------------------
 
@@ -83,7 +84,7 @@ CREATE TABLE `students` (
   `full_name` varchar(255) NOT NULL,
   `identity` varchar(255) NOT NULL,
   `dob` date DEFAULT NULL,
-  `gender` enum('nam','nữ','khác') NOT NULL DEFAULT 'nam',
+  `gender` enum('Nam','Nữ','Khác') NOT NULL DEFAULT 'Nam',
   `address` varchar(255) NOT NULL,
   `major` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -96,8 +97,8 @@ CREATE TABLE `students` (
 --
 
 INSERT INTO `students` (`id`, `student_code`, `full_name`, `identity`, `dob`, `gender`, `address`, `major`, `email`, `status`, `created_at`) VALUES
-(17, '22004151', 'Võ Lê Minh', '86123456789', '2004-01-01', 'nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004151@st.vlute.edu.vn', 'Đang học', '2024-10-22 10:40:59'),
-(18, '22004152', 'Hồng Phạm Gia', '86123456789', '2004-01-01', 'nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004152@st.vlute.edu.vn', 'Đang học', '2024-10-22 14:11:47');
+(17, '22004151', 'Võ Lê Minh Khang', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004151@st.vlute.edu.vn', 'Đang học', '2024-10-22 10:40:59'),
+(18, '22004152', 'Hồng Phạm Gia Thiên', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004152@st.vlute.edu.vn', 'Đang học', '2024-10-22 14:11:47');
 
 -- --------------------------------------------------------
 
@@ -162,13 +163,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `students`
