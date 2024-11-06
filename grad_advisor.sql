@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2024 at 03:19 AM
+-- Generation Time: Nov 06, 2024 at 03:35 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -41,12 +41,29 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `optional`, `pre_course`) VALUES
-(6, 'CS1452', 'Toán rời rạc', 2, 'Bắt buộc', 7),
-(7, 'CS1235', 'Đại số tuyến tính', 3, 'Bắt buộc', NULL),
-(10, 'CS1346', 'Xác suất thống kê', 3, 'Bắt buộc', 7),
-(11, 'CS1652', 'Kinh tế học', 2, 'Tự chọn', 10),
-(12, 'CS1563', 'Nhập môn dữ liệu', 2, 'Bắt buộc', NULL),
-(13, 'CT2101', 'Triết học Mác-Lênin', 3, 'Bắt buộc', NULL);
+(7, 'CT2102', 'Kinh tế chính trị Mác-Lênin', 2, 'Bắt buộc', NULL),
+(13, 'CT2101', 'Triết học Mác-Lênin', 3, 'Bắt buộc', NULL),
+(14, 'CT2103', 'Chủ nghĩa xã hội khoa học', 2, 'Bắt buộc', NULL),
+(15, 'CT2104', 'Lịch sử Đảng Cộng sản Việt Nam', 2, 'Bắt buộc', NULL),
+(16, 'CT1102', 'Tư tưởng Hồ Chí Minh', 2, 'Bắt buộc', NULL),
+(17, 'UL1104', 'Pháp luật đại cương', 2, 'Bắt buộc', NULL),
+(18, 'EC1600', 'Khởi nghiệp', 1, 'Bắt buộc', NULL),
+(20, 'UL1106', 'Quản lý hành chính nhà nước và quản lý ngành giáo dục –  đào tạo', 2, 'Bắt buộc', NULL),
+(21, 'CB1106', 'Toán cao cấp A1', 3, 'Bắt buộc', NULL),
+(22, 'CB1107', 'Toán cao cấp A2', 3, 'Bắt buộc', NULL),
+(23, 'CB1111', 'Vật lý đại cương A1', 3, 'Bắt buộc', NULL),
+(24, 'TC1102', 'Giáo dục thể chất 2', 1, 'Bắt buộc', NULL),
+(25, 'TC1101', 'Giáo dục thể chất 1', 1, 'Bắt buộc', NULL),
+(26, 'TC1103', 'Giáo dục thể chất 3', 1, 'Bắt buộc', NULL),
+(27, 'QP2101', 'Đường lối quốc phòng và an ninh của ĐCSVN', 3, 'Bắt buộc', NULL),
+(28, 'QP2102', 'Công tác quốc phòng – An ninh', 2, 'Bắt buộc', NULL),
+(29, 'QP2103', 'Quân sự chung', 1, 'Bắt buộc', NULL),
+(30, 'QP2104', 'Kỹ thuật chiến đấu bộ binh và chiến thuật', 2, 'Bắt buộc', NULL),
+(31, 'TH1201', 'Tin học cơ sở', 2, 'Bắt buộc', 32),
+(32, 'TH1203', 'Toán rời rạc', 2, 'Bắt buộc', 31),
+(33, 'TH1219', 'Lập trình căn bản', 4, 'Bắt buộc', 34),
+(34, 'TH1205', 'Cấu trúc máy tính', 3, 'Bắt buộc', 33),
+(35, 'TH1207', 'Cơ sở dữ liệu', 3, 'Bắt buộc', 34);
 
 -- --------------------------------------------------------
 
@@ -69,8 +86,11 @@ CREATE TABLE `grades` (
 --
 
 INSERT INTO `grades` (`id`, `student_code`, `grade`, `language`, `infomatic`, `military`, `created_at`) VALUES
-(10, '22004151', '{\"CS1235\": \"5\", \"CS1346\": \"6\", \"CS1652\": \"7\", \"CS1563\": \"8\", \"CS1452\": \"8\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-10-26 22:13:33'),
-(11, '22004152', '{\"CS1346\": \"9\", \"CS1652\": \"8\", \"CS1563\": \"9\", \"CS1452\": \"9\", \"CS1235\": \"10\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-10-28 09:49:44');
+(14, '22004153', '{\"CT2102\": \"6\", \"CT2101\": \"8\", \"CT2103\": \"9\", \"CT2104\": \"4\", \"CT1102\": \"5\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:32:55'),
+(15, '22004157', '{\"CT2102\":\"6\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:33:38'),
+(16, '22004154', '{\"EC1600\":\"2\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:34:37'),
+(17, '22004156', '{\"EC1600\":\"5\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:34:48'),
+(18, '22004151', '{\"CT2102\": \"5\", \"CT2101\": \"3\", \"CT2103\": \"7\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-06 06:24:36');
 
 -- --------------------------------------------------------
 
@@ -98,7 +118,25 @@ CREATE TABLE `students` (
 
 INSERT INTO `students` (`id`, `student_code`, `full_name`, `identity`, `dob`, `gender`, `address`, `major`, `email`, `status`, `created_at`) VALUES
 (17, '22004151', 'Võ Lê Minh Khang', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004151@st.vlute.edu.vn', 'Đang học', '2024-10-22 10:40:59'),
-(18, '22004152', 'Hồng Phạm Gia Thiên', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004152@st.vlute.edu.vn', 'Đang học', '2024-10-22 14:11:47');
+(18, '22004152', 'Hồng Phạm Gia Thiên', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công nghệ thông tin', '22004152@st.vlute.edu.vn', 'Đang học', '2024-10-22 14:11:47'),
+(19, '22004153', 'Nguyễn Kim Hân', '86123456789', '2004-01-01', 'Nữ', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004153@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:43:15'),
+(20, '22004154', 'Nguyễn Duy Quân', '86123456789', '2024-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004154@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:43:49'),
+(21, '22004155', 'Nguyễn Tuấn Đạt', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004155@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:44:22'),
+(22, '22004156', 'Trần Phát	Tài', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004156@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:45:02'),
+(23, '22004157', 'Nguyễn Tấn Lộc', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004157@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:53:42'),
+(24, '22004158', 'Nguyễn Tiểu Mẫn', '86123456789', '2004-01-01', 'Nữ', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004158@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:58:56'),
+(25, '22004159', 'Nguyễn Thị Thảo Nhi', '86123456789', '2004-01-01', 'Nữ', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004159@st.vlute.edu.vn', 'Đang học', '2024-11-05 17:59:29'),
+(26, '22004160', 'Lê Gia Anh', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004160@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:00:04'),
+(27, '22004161', 'Phan Vân	Sơn', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004161@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:00:34'),
+(28, '22004162', 'Dương Võ Thành Luân', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004162@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:01:02'),
+(29, '22004163', 'Nguyễn Thành Đạt', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004163@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:01:29'),
+(30, '22004164', 'Lê Quang Vinh Hiển', '86123456789', '2004-01-12', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004164@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:02:13'),
+(31, '22004165', 'Lê Phúc Duy', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004165@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:03:33'),
+(32, '22004166', 'Lê Thị Thúy Vy', '86123456789', '2004-01-01', 'Nữ', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004166@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:04:04'),
+(33, '22004167', 'Lê Tiến Trung', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004167@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:04:34'),
+(34, '22004168', 'Võ Trọng	Văn', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004168@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:05:29'),
+(35, '22004169', 'Nguyễn Vỹ Khang', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004169@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:06:21'),
+(36, '22004170', 'Hồ Thanh Trọng', '86123456789', '2004-01-01', 'Nam', 'Vĩnh Long', 'Công Nghệ Thông Tin', '22004170@st.vlute.edu.vn', 'Đang học', '2024-11-05 18:07:27');
 
 -- --------------------------------------------------------
 
@@ -163,19 +201,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `users`

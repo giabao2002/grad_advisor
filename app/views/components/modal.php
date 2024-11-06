@@ -1,4 +1,10 @@
 <!-- modal.php -->
+<style>
+    .grade-select {
+        max-height: 150px !important;
+        overflow-y: auto !important;
+    }
+</style>
 <div class="modal fade" id="<?php echo $modalId; ?>" tabindex="-1" aria-labelledby="<?php echo $modalLabelId; ?>" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">

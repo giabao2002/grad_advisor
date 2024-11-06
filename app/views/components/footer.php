@@ -95,27 +95,33 @@
         var row = document.createElement('div');
         row.className = 'row mb-2';
 
-        // Tạo cột cho thẻ select và label
-        var selectCol = document.createElement('div');
-        selectCol.className = 'col-5';
+        // Tạo cột cho thẻ input và label
+        var inputCol = document.createElement('div');
+        inputCol.className = 'col-5';
 
-        // Tạo label cho thẻ select
-        var selectLabel = document.createElement('label');
-        selectLabel.textContent = 'Chọn học phần';
-        selectLabel.className = 'form-label';
+        // Tạo label cho thẻ input
+        var inputLabel = document.createElement('label');
+        inputLabel.textContent = 'Chọn học phần';
+        inputLabel.className = 'form-label';
 
-        // Tạo thẻ select cho học phần
-        var select = document.createElement('select');
-        select.className = 'form-control';
-        select.name = 'courses[]';
-        select.required = true;
+        // Tạo thẻ input cho học phần
+        var input = document.createElement('input');
+        input.className = 'form-control grade-input';
+        input.name = 'courses[]';
+        input.setAttribute('list', 'courseList');
+        input.required = true;
+
+        // Tạo thẻ datalist cho học phần
+        var datalist = document.createElement('datalist');
+        datalist.id = 'courseList';
 
         // Lấy danh sách các học phần đã được chọn
-        var selectedCourses = Array.from(document.querySelectorAll('select[name="courses[]"]'))
-            .map(function(select) {
-                return select.value;
+        var selectedCourses = Array.from(document.querySelectorAll('input[name="courses[]"]'))
+            .map(function(input) {
+                return input.value;
             });
-        // Thêm các tùy chọn vào thẻ select
+
+        // Thêm các tùy chọn vào thẻ datalist
         <?php
         // Danh sách các học phần trong biến $courses
         if (isset($courses)) {
@@ -124,33 +130,34 @@
                 echo "var option = document.createElement('option');";
                 echo "option.value = '{$course['course_code']}';";
                 echo "option.text = '{$course['course_name']}';";
-                echo "select.appendChild(option);";
+                echo "datalist.appendChild(option);";
                 echo "}";
             }
         }
         ?>
-        selectCol.appendChild(selectLabel);
-        selectCol.appendChild(select);
-
-        // Tạo cột cho thẻ input và label
-        var inputCol = document.createElement('div');
-        inputCol.className = 'col-5';
-
-        // Tạo label cho thẻ input
-        var inputLabel = document.createElement('label');
-        inputLabel.textContent = 'Nhập điểm';
-        inputLabel.className = 'form-label';
-
-        // Tạo thẻ input cho điểm
-        var input = document.createElement('input');
-        input.type = 'number';
-        input.className = 'form-control';
-        input.name = 'grades[]';
-        input.placeholder = 'Nhập điểm';
-        input.required = true;
-
         inputCol.appendChild(inputLabel);
         inputCol.appendChild(input);
+        inputCol.appendChild(datalist);
+
+        // Tạo cột cho thẻ input và label
+        var gradeCol = document.createElement('div');
+        gradeCol.className = 'col-5';
+
+        // Tạo label cho thẻ input
+        var gradeLabel = document.createElement('label');
+        gradeLabel.textContent = 'Nhập điểm';
+        gradeLabel.className = 'form-label';
+
+        // Tạo thẻ input cho điểm
+        var gradeInput = document.createElement('input');
+        gradeInput.type = 'number';
+        gradeInput.className = 'form-control';
+        gradeInput.name = 'grades[]';
+        gradeInput.placeholder = 'Nhập điểm';
+        gradeInput.required = true;
+
+        gradeCol.appendChild(gradeLabel);
+        gradeCol.appendChild(gradeInput);
 
         // Tạo cột cho nút xóa
         var deleteCol = document.createElement('div');
@@ -170,8 +177,8 @@
         deleteCol.appendChild(deleteButton);
 
         // Thêm các cột vào hàng
-        row.appendChild(selectCol);
         row.appendChild(inputCol);
+        row.appendChild(gradeCol);
         row.appendChild(deleteCol);
 
         // Thêm hàng vào container
