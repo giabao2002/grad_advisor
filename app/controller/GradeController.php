@@ -1,5 +1,9 @@
 <?php
 require_once("/xampp/htdocs/core/db_connect.php");
+require_once("/xampp/htdocs/core/SimpleXLSX.php");
+
+use Shuchkin\SimpleXLSX;
+
 
 class GradeController
 {
@@ -37,21 +41,21 @@ class GradeController
         $student_code = $data['student_code'];
         $courses = $data['courses'];
         $grades = $data['grades'];
-    
+
         $student_query = "SELECT * FROM students WHERE student_code = '$student_code'";
         $student_result = mysqli_query($this->conn, $student_query);
-    
+
         if (mysqli_num_rows($student_result) == 0) {
             return "Mã sinh viên không tồn tại";
         }
-    
+
         // Tạo mảng để lưu điểm dưới dạng JSON
         $grades_json = [];
         foreach ($courses as $index => $course_id) {
             $grades_json[$course_id] = $grades[$index];
         }
         $grades_json = json_encode($grades_json);
-    
+
         // Kiểm tra xem sinh viên đã có trong danh sách hay chưa
         $check_query = "
             SELECT 
@@ -64,19 +68,19 @@ class GradeController
             WHERE g.student_code = '$student_code'
         ";
         $check_result = mysqli_query($this->conn, $check_query);
-    
+
         if ($check_result) {
             $existing_grades = [];
             while ($row = mysqli_fetch_assoc($check_result)) {
                 $existing_grades[$row['course_code']] = $row['course_grade'];
             }
-    
+
             foreach ($courses as $index => $course_id) {
                 if (isset($existing_grades[$course_id])) {
                     // Nếu đã có điểm cho học phần này, bỏ qua việc thêm hoặc cập nhật
                     return "Điểm cho học phần đã có, không thể sửa!";
                 }
-    
+
                 // Nếu chưa có điểm cho học phần này, thêm hoặc cập nhật điểm
                 $update_query = "
                     UPDATE grades 
@@ -87,7 +91,7 @@ class GradeController
                     return "Lỗi khi cập nhật điểm cho sinh viên";
                 }
             }
-    
+
             // Nếu không có học phần nào cần cập nhật, trả về thông báo
             if (empty($existing_grades)) {
                 $insert_query = "INSERT INTO grades (student_code, grade) VALUES ('$student_code', '$grades_json')";
@@ -96,7 +100,7 @@ class GradeController
                 }
             }
         }
-    
+
         return true;
     }
 
@@ -152,6 +156,66 @@ class GradeController
             return [];
         }
     }
+
+    public function import($file)
+    {
+        // Kiểm tra phần mở rộng của file
+        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $valid_extensions = ['xlsx'];
+        if (!in_array($file_extension, $valid_extensions)) {
+            return "File không hợp lệ! Chỉ chấp nhận các file có định dạng .xlsx.";
+        }
+
+        // Kiểm tra loại MIME của file
+        $file_mime = mime_content_type($file['tmp_name']);
+        $valid_mimes = [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        if (!in_array($file_mime, $valid_mimes)) {
+            return "File không hợp lệ! Chỉ chấp nhận các file có định dạng .xlsx.";
+        }
+
+        if ($xlsx = SimpleXLSX::parse($file['tmp_name'])) {
+            $data = [];
+            $course_code = [];
+
+            // Duyệt qua các hàng, bỏ qua hàng đầu tiên nếu là tiêu đề
+            foreach ($xlsx->rows() as $index => $row) {
+                if ($index < 5) continue;
+
+                // Lấy mã học phần từ hàng thứ 5
+                if ($index == 5) {
+                    $col = 3;
+                    while ($row[$col]) {
+                        $result = preg_replace('/\s*\(\d+\)$/', '', $row[$col]);
+                        $course_code[] = $result;
+                        $col += 2;
+                    }
+                }
+                // Bắt đầu lấy điểm từ hàng thứ 10
+                if($index > 9 ){
+                    $studentCode = $row[1] ?? null;
+                    $grades = [];
+                    $col = 4;
+                    for($i = 0; $i < count($course_code); $i++){
+                        $grades[] = $row[$col] ?? null;
+                        $col += 2;
+                    }
+                    if ($studentCode) {
+                        $this->store([
+                            'student_code' => $studentCode,
+                            'courses' => $course_code,
+                            'grades' => $grades,
+                        ]);
+                    }
+                }
+            }
+            return "Thêm điểm thành công!";
+        } else {
+            // Lỗi khi đọc file
+            return "Lỗi khi đọc file Excel: " . SimpleXLSX::parseError();
+        }
+    }
 }
 
 // Khởi tạo controller
@@ -182,6 +246,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     header("Location: /?page=grades&message=$response");
                 } else {
                     header("Location: /?page=grades");
+                }
+                break;
+            case 'import':
+                if (isset($_FILES['data'])) {
+                    $response = $gradeController->import($_FILES['data']);
+                    if (gettype($response) == "string") {
+                        header("Location: /?page=grades&message=$response");
+                    } else {
+                        header("Location: /?page=grades");
+                    }
+                } else {
+                    $response = "Tải file không thành công!";
+                    header("Location: /?page=grades&message=$response");
                 }
                 break;
         }

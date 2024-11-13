@@ -12,7 +12,7 @@
                 <h5 class="modal-title" id="<?php echo $modalLabelId; ?>"><?php echo $modalTitle; ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="<?php echo $formAction; ?>" method="post" id="<?php echo $formId; ?>">
+            <form action="<?php echo $formAction; ?>" method="post" id="<?php echo $formId; ?>" enctype="multipart/form-data">
                 <div class="modal-body">
                     <?php echo $formContent; ?>
                 </div>

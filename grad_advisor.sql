@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2024 at 03:35 AM
+-- Generation Time: Nov 13, 2024 at 09:14 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,6 +33,7 @@ CREATE TABLE `courses` (
   `course_name` varchar(255) NOT NULL,
   `credits` int(11) NOT NULL,
   `optional` enum('Bắt buộc','Tự chọn') DEFAULT 'Bắt buộc',
+  `accumulation` enum('Tích lũy','Không tích lũy') DEFAULT 'Tích lũy',
   `pre_course` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -40,30 +41,30 @@ CREATE TABLE `courses` (
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `optional`, `pre_course`) VALUES
-(7, 'CT2102', 'Kinh tế chính trị Mác-Lênin', 2, 'Bắt buộc', NULL),
-(13, 'CT2101', 'Triết học Mác-Lênin', 3, 'Bắt buộc', NULL),
-(14, 'CT2103', 'Chủ nghĩa xã hội khoa học', 2, 'Bắt buộc', NULL),
-(15, 'CT2104', 'Lịch sử Đảng Cộng sản Việt Nam', 2, 'Bắt buộc', NULL),
-(16, 'CT1102', 'Tư tưởng Hồ Chí Minh', 2, 'Bắt buộc', NULL),
-(17, 'UL1104', 'Pháp luật đại cương', 2, 'Bắt buộc', NULL),
-(18, 'EC1600', 'Khởi nghiệp', 1, 'Bắt buộc', NULL),
-(20, 'UL1106', 'Quản lý hành chính nhà nước và quản lý ngành giáo dục –  đào tạo', 2, 'Bắt buộc', NULL),
-(21, 'CB1106', 'Toán cao cấp A1', 3, 'Bắt buộc', NULL),
-(22, 'CB1107', 'Toán cao cấp A2', 3, 'Bắt buộc', NULL),
-(23, 'CB1111', 'Vật lý đại cương A1', 3, 'Bắt buộc', NULL),
-(24, 'TC1102', 'Giáo dục thể chất 2', 1, 'Bắt buộc', NULL),
-(25, 'TC1101', 'Giáo dục thể chất 1', 1, 'Bắt buộc', NULL),
-(26, 'TC1103', 'Giáo dục thể chất 3', 1, 'Bắt buộc', NULL),
-(27, 'QP2101', 'Đường lối quốc phòng và an ninh của ĐCSVN', 3, 'Bắt buộc', NULL),
-(28, 'QP2102', 'Công tác quốc phòng – An ninh', 2, 'Bắt buộc', NULL),
-(29, 'QP2103', 'Quân sự chung', 1, 'Bắt buộc', NULL),
-(30, 'QP2104', 'Kỹ thuật chiến đấu bộ binh và chiến thuật', 2, 'Bắt buộc', NULL),
-(31, 'TH1201', 'Tin học cơ sở', 2, 'Bắt buộc', 32),
-(32, 'TH1203', 'Toán rời rạc', 2, 'Bắt buộc', 31),
-(33, 'TH1219', 'Lập trình căn bản', 4, 'Bắt buộc', 34),
-(34, 'TH1205', 'Cấu trúc máy tính', 3, 'Bắt buộc', 33),
-(35, 'TH1207', 'Cơ sở dữ liệu', 3, 'Bắt buộc', 34);
+INSERT INTO `courses` (`id`, `course_code`, `course_name`, `credits`, `optional`, `accumulation`, `pre_course`) VALUES
+(7, 'CT2102', 'Kinh tế chính trị Mác-Lênin', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(13, 'CT2101', 'Triết học Mác-Lênin', 3, 'Bắt buộc', 'Tích lũy', NULL),
+(14, 'CT2103', 'Chủ nghĩa xã hội khoa học', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(15, 'CT2104', 'Lịch sử Đảng Cộng sản Việt Nam', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(16, 'CT1102', 'Tư tưởng Hồ Chí Minh', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(17, 'UL1104', 'Pháp luật đại cương', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(18, 'EC1600', 'Khởi nghiệp', 1, 'Bắt buộc', 'Tích lũy', NULL),
+(20, 'UL1106', 'Quản lý hành chính nhà nước và quản lý ngành giáo dục –  đào tạo', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(21, 'CB1106', 'Toán cao cấp A1', 3, 'Bắt buộc', 'Tích lũy', NULL),
+(22, 'CB1107', 'Toán cao cấp A2', 3, 'Bắt buộc', 'Tích lũy', NULL),
+(23, 'CB1111', 'Vật lý đại cương A1', 3, 'Bắt buộc', 'Tích lũy', NULL),
+(24, 'TC1102', 'Giáo dục thể chất 2', 1, 'Bắt buộc', 'Tích lũy', NULL),
+(25, 'TC1101', 'Giáo dục thể chất 1', 1, 'Bắt buộc', 'Tích lũy', NULL),
+(26, 'TC1103', 'Giáo dục thể chất 3', 1, 'Bắt buộc', 'Tích lũy', NULL),
+(27, 'QP2101', 'Đường lối quốc phòng và an ninh của ĐCSVN', 3, 'Bắt buộc', 'Tích lũy', NULL),
+(28, 'QP2102', 'Công tác quốc phòng – An ninh', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(29, 'QP2103', 'Quân sự chung', 1, 'Bắt buộc', 'Tích lũy', NULL),
+(30, 'QP2104', 'Kỹ thuật chiến đấu bộ binh và chiến thuật', 2, 'Bắt buộc', 'Tích lũy', NULL),
+(31, 'TH1201', 'Tin học cơ sở', 2, 'Bắt buộc', 'Tích lũy', 32),
+(32, 'TH1203', 'Toán rời rạc', 2, 'Bắt buộc', 'Tích lũy', 31),
+(33, 'TH1219', 'Lập trình căn bản', 4, 'Bắt buộc', 'Tích lũy', 34),
+(34, 'TH1205', 'Cấu trúc máy tính', 3, 'Bắt buộc', 'Tích lũy', 33),
+(35, 'TH1207', 'Cơ sở dữ liệu', 3, 'Bắt buộc', 'Tích lũy', 34);
 
 -- --------------------------------------------------------
 
@@ -78,6 +79,7 @@ CREATE TABLE `grades` (
   `language` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
   `infomatic` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
   `military` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
+  `practising` enum('Đạt','Chưa đạt') DEFAULT 'Chưa đạt',
   `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -85,12 +87,26 @@ CREATE TABLE `grades` (
 -- Dumping data for table `grades`
 --
 
-INSERT INTO `grades` (`id`, `student_code`, `grade`, `language`, `infomatic`, `military`, `created_at`) VALUES
-(14, '22004153', '{\"CT2102\": \"6\", \"CT2101\": \"8\", \"CT2103\": \"9\", \"CT2104\": \"4\", \"CT1102\": \"5\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:32:55'),
-(15, '22004157', '{\"CT2102\":\"6\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:33:38'),
-(16, '22004154', '{\"EC1600\":\"2\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:34:37'),
-(17, '22004156', '{\"EC1600\":\"5\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-05 18:34:48'),
-(18, '22004151', '{\"CT2102\": \"5\", \"CT2101\": \"3\", \"CT2103\": \"7\"}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-06 06:24:36');
+INSERT INTO `grades` (`id`, `student_code`, `grade`, `language`, `infomatic`, `military`, `practising`, `created_at`) VALUES
+(40, '22004152', '{\"CB1106\":0,\"CB1111\":0,\"CT2101\":0,\"QP2101\":0,\"QP2102\":0,\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":1,\"TH1203\":0,\"TH1227\":0}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(41, '22004153', '{\"CB1106\":3,\"CB1111\":2,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":3,\"TH1203\":2,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(42, '22004154', '{\"CB1106\":3,\"CB1111\":2,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":2,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(43, '22004155', '{\"CB1106\":2,\"CB1111\":2,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":1,\"TH1203\":1,\"TH1227\":1}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(44, '22004156', '{\"CB1106\":0,\"CB1111\":1,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":0,\"TH1227\":0}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(45, '22004157', '{\"CB1106\":4,\"CB1111\":2,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":3,\"TH1203\":2,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(46, '22004158', '{\"CB1106\":4,\"CB1111\":1,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":1,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(47, '22004159', '{\"CB1106\":4,\"CB1111\":3,\"CT2101\":4,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":3,\"TH1203\":3,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(48, '22004160', '{\"CB1106\":4,\"CB1111\":4,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":3,\"TH1203\":0,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(49, '22004161', '{\"CB1106\":0,\"CB1111\":0,\"CT2101\":0,\"QP2101\":0,\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":0,\"TH1227\":0}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(50, '22004162', '{\"CB1106\":3,\"CB1111\":3,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":3,\"TH1203\":1,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(51, '22004163', '{\"CB1106\":2,\"CB1111\":1,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":1,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(52, '22004164', '{\"CB1106\":1,\"CB1111\":1,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":0,\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":1,\"TH1203\":0,\"TH1227\":0}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(53, '22004165', '{\"CB1106\":2,\"CB1111\":1,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":1,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(54, '22004166', '{\"CB1106\":1,\"CB1111\":1,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":1,\"TH1227\":2}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(55, '22004167', '{\"CB1106\":2,\"CB1111\":1,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":1,\"TH1227\":0}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(56, '22004168', '{\"CB1106\":4,\"CB1111\":3,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":3,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(57, '22004169', '{\"CB1106\":4,\"CB1111\":3,\"CT2101\":3,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":2,\"TH1203\":3,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03'),
+(58, '22004170', '{\"CB1106\":4,\"CB1111\":2,\"CT2101\":2,\"QP2101\":\"\",\"QP2102\":\"\",\"QP2103\":\"\",\"QP2104\":\"\",\"TH1201\":1,\"TH1203\":2,\"TH1227\":3}', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', 'Chưa đạt', '2024-11-13 10:14:03');
 
 -- --------------------------------------------------------
 
@@ -201,13 +217,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `grades`
 --
 ALTER TABLE `grades`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `students`

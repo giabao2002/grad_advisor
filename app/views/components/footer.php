@@ -44,6 +44,7 @@
                 var optional = button.getAttribute('data-optional');
                 var credits = button.getAttribute('data-credits');
                 var pre_course = button.getAttribute('data-pre_course');
+                var accumulation = button.getAttribute('data-accumulation');
 
                 // Điền thông tin vào các trường trong form
                 var modal = this;
@@ -54,15 +55,15 @@
                 modal.querySelector('#optional').value = optional;
                 modal.querySelector('#optional').checked = optional == 1;
                 modal.querySelector('#pre_course').value = pre_course;
+                modal.querySelector('#accumulation').value = accumulation;
             });
         }
 
         // Lấy khóa học đã chọn
-        var courseSelect = document.getElementById('courseSelect');
+        var courseSelect = document.getElementById('coursePageSelect');
 
         courseSelect && courseSelect.addEventListener('change', function() {
             var selectedValue = courseSelect.value;
-            console.log('Selected course ID:', selectedValue);
 
             window.location.href = '?page=grades&course=' + selectedValue;
         });

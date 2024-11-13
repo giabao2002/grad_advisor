@@ -34,6 +34,7 @@ class CourseController
         $credits = $data['credits'];
         $optional = $data['optional'] ? $data['optional'] : null;
         $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
+        $accumulation = $data['accumulation'] ? $data['accumulation'] : null;
 
         // Kiểm tra xem học phần đã tồn tại hay chưa
         $check_query = "SELECT * FROM courses WHERE course_code = '$course_code' OR course_name = '$course_name'";
@@ -54,9 +55,9 @@ class CourseController
             }
             // Thêm mới học phần
             if ($pre_course == null) {
-                $query = "INSERT INTO courses (course_code, course_name, credits, optional) VALUES ('$course_code', '$course_name', '$credits', '$optional')";
+                $query = "INSERT INTO courses (course_code, course_name, credits, optional, accumulation) VALUES ('$course_code', '$course_name', '$credits', '$optional', '$accumulation')";
             } else {
-                $query = "INSERT INTO courses (course_code, course_name, credits, optional, pre_course) VALUES ('$course_code', '$course_name', '$credits', '$optional', '$pre_course')";
+                $query = "INSERT INTO courses (course_code, course_name, credits, optional, pre_course, accumulation) VALUES ('$course_code', '$course_name', '$credits', '$optional', '$pre_course', '$accumulation')";
             }
             if (mysqli_query($this->conn, $query)) {
                 return true;
@@ -73,6 +74,7 @@ class CourseController
         $credits = $data['credits'];
         $optional = $data['optional'] ? $data['optional'] : null;
         $pre_course = $data['pre_course'] ? $data['pre_course'] : null;
+        $accumulation = $data['accumulation'] ? $data['accumulation'] : null;
 
         if (!empty($pre_course)) {
             $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
@@ -85,9 +87,9 @@ class CourseController
         }
         // Cập nhật thông tin học phần
         if ($pre_course == null) {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional' WHERE id=$id";
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional', accumulation='$accumulation' WHERE id=$id";
         } else {
-            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional', pre_course='$pre_course' WHERE id=$id";
+            $query = "UPDATE courses SET course_code='$course_code', course_name='$course_name', credits='$credits', optional='$optional', pre_course='$pre_course', accumulation='$accumulation' WHERE id=$id";
         }
         if (mysqli_query($this->conn, $query)) {
             return true;
@@ -138,7 +140,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'course_name' => $_POST['course_name'],
                     'credits' => $_POST['credits'],
                     'optional' => $_POST['optional'],
-                    'pre_course' => $_POST['pre_course']
+                    'pre_course' => $_POST['pre_course'],
+                    'accumulation' => $_POST['accumulation']
                 ];
                 $response = $courseController->store($data);
                 if (gettype($response) == "string") {
@@ -154,7 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'course_name' => $_POST['course_name'],
                     'credits' => $_POST['credits'],
                     'optional' => $_POST['optional'],
-                    'pre_course' => $_POST['pre_course']
+                    'pre_course' => $_POST['pre_course'],
+                    'accumulation' => $_POST['accumulation']
                 ];
                 $response = $courseController->update($id, $data);
                 if (gettype($response) == "string") {

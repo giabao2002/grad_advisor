@@ -24,6 +24,7 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <p class="fw-bold">Chứng chỉ ngoại ngữ:</p>
                 <p class="fw-bold">Chứng chỉ tin học:</p>
                 <p class="fw-bold">Chứng chỉ quân sự:</p>
+                <p class="fw-bold">Chứng chỉ nghề:</p>
                 <p class="fw-bold">Tiến trình học tập:</p>
             </div>
             <div class="col-6 col-md-9 mt-2">
@@ -54,11 +55,15 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 </p>
                 <p class="d-flex">
                     <?php echo isset($students['infomatic']) ? $students['infomatic'] : "Chưa đạt"; ?>
-                    <a type="button" href="/app/controller/GraduateController.php?cert=infomatic&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['language']; ?>"><i class="material-icons">autorenew</i></a>
+                    <a type="button" href="/app/controller/GraduateController.php?cert=infomatic&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['infomatic']; ?>"><i class="material-icons">autorenew</i></a>
                 </p>
                 <p class="d-flex">
                     <?php echo isset($students['military']) ? $students['military'] : "Chưa đạt"; ?>
-                    <a type="button" href="/app/controller/GraduateController.php?cert=military&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['language']; ?>"><i class="material-icons">autorenew</i></a>
+                    <a type="button" href="/app/controller/GraduateController.php?cert=military&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['military']; ?>"><i class="material-icons">autorenew</i></a>
+                </p>
+                <p class="d-flex">
+                    <?php echo isset($students['practising']) ? $students['practising'] : "Chưa đạt"; ?>
+                    <a type="button" href="/app/controller/GraduateController.php?cert=practising&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['practising']; ?>"><i class="material-icons">autorenew</i></a>
                 </p>
                 <p><?php echo $students['grade_courses_count'] . "/" . $students['total_courses_count']; ?></p>
             </div>
@@ -69,19 +74,24 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <thead>
                     <tr>
                         <th scope="col">#</th>
+                        <th scope="col">Mã môn học</th>
                         <th scope="col">Học phần</th>
+                        <th scope="col">Số tín chỉ</th>
                         <th scope="col">Điểm hệ số 10</th>
                         <!-- <th scope="col">Điểm hệ số 4</th> -->
                         <th scope="col">Điểm chữ</th>
+                        <th scope="col">Khối học phần</th>
+                        <th scope="col">Loại học phần</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($students['course_grades'] as $index => $course_grade): ?>
                         <tr>
                             <th scope="row"><?php echo $index + 1; ?></th>
+                            <td><?php echo htmlspecialchars($course_grade['course_code']); ?></td>
                             <td><?php echo htmlspecialchars($course_grade['course_name']); ?></td>
+                            <td><?php echo htmlspecialchars($course_grade['credits']); ?></td>
                             <td><?php echo htmlspecialchars($course_grade['grade']); ?></td>
-                            <!-- <td><?php echo htmlspecialchars($course_grade['grade']); ?></td> -->
                             <td><?php
                                 if ($course_grade['grade'] >= 9) {
                                     echo 'A';
@@ -95,14 +105,13 @@ $study_progress = $detailController->getCoursesTree($student_code);
                                     echo 'F';
                                 }
                                 ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($course_grade['optional']); ?></td>
+                            <td><?php echo htmlspecialchars($course_grade['accumulation']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
-        <div class="row shadow-lg p-3 mb-5 bg-body rounded">
-            <h5 class="bg-info p-2 text-light rounded">Tiến trình học tập</h5>
-            <?php include '/xampp/htdocs/app/views/components/progressTree.php'; ?>
         </div>
     </div>
 </nav>

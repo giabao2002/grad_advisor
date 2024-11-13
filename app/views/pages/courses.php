@@ -46,6 +46,7 @@ if ($search && $search_by) {
                 <th scope="col">Số tín chỉ</th>
                 <th scope="col">Tùy chọn</th>
                 <th scope="col">Học phần tiên quyết</th>
+                <th scope="col">Loại học phần</th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -54,10 +55,11 @@ if ($search && $search_by) {
                 <tr>
                     <th scope="row"><?php echo $index + 1; ?></th>
                     <td><?php echo htmlspecialchars($course['course_code']); ?></td>
-                    <td><?php echo htmlspecialchars($course['course_name']); ?></td>
+                    <td class="col-2"><?php echo htmlspecialchars($course['course_name']); ?></td>
                     <td><?php echo htmlspecialchars($course['credits']); ?></td>
                     <td><?php echo $course['optional']; ?></td>
                     <td><?php echo htmlspecialchars($course['pre_course_name']); ?></td>
+                    <td><?php echo htmlspecialchars($course['accumulation']); ?></td>
                     <td>
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCourseModal"
                             data-id="<?php echo $course['id']; ?>"
@@ -65,7 +67,8 @@ if ($search && $search_by) {
                             data-course_name="<?php echo htmlspecialchars($course['course_name']); ?>"
                             data-credits="<?php echo htmlspecialchars($course['credits']); ?>"
                             data-optional="<?php echo $course['optional']; ?>"
-                            data-pre_course="<?php echo htmlspecialchars($course['pre_course']); ?>">
+                            data-pre_course="<?php echo htmlspecialchars($course['pre_course']); ?>"
+                            data-accumulation="<?php echo htmlspecialchars($course['accumulation']); ?>">
                             <i class="material-icons">edit</i>
                         </button>
                         <form action="app/controller/CourseController.php" method="POST" style="display:inline;">
@@ -124,6 +127,13 @@ if ($search && $search_by) {
             </select>
         </div>
         <div class="mb-3">
+            <label for="accumulation" class="form-label">Loại học phần</label>
+            <select class="form-control" id="accumulation" name="accumulation">
+                <option value="Tích lũy" selected>Tích lũy</option>
+                <option value="Không tích lũy">Không tích lũy</option>
+            </select>
+        </div>
+        <div class="mb-3">
             <label for="pre_course" class="form-label">Học phần tiên quyết</label>
             <select class="form-control" id="pre_course" name="pre_course">
                 ' . $options . '
@@ -163,6 +173,13 @@ if ($search && $search_by) {
             <select class="form-control" id="optional" name="optional">
                 <option value="Bắt buộc">Bắt buộc</option>
                 <option value="Tự chọn">Tự chọn</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="accumulation" class="form-label">Loại học phần</label>
+            <select class="form-control" id="accumulation" name="accumulation">
+                <option value="Tích lũy" selected>Tích lũy</option>
+                <option value="Không tích lũy">Không tích lũy</option>
             </select>
         </div>
         <div class="mb-3">

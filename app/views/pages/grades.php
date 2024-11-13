@@ -11,7 +11,7 @@ $limit = 10; // Số lượng sinh viên mỗi trang
 $offset = ($page - 1) * $limit;
 
 // Lấy danh sách học phần
-$courses = $courseController->index($limit, $offset);
+$courses = $courseController->index(null, null);
 $course = isset($_GET['course']) ? $_GET['course'] : '';
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 
@@ -33,19 +33,21 @@ if ($search) {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
-    <select class="form-select form-select-sm mb-2" style="width: 385px;" name="course" id="courseSelect">
+    <input class="form-control form-control-sm mb-2" style="width: 385px;" name="course" id="coursePageSelect" list="coursePageList" placeholder="<?php echo $course?htmlspecialchars($course):'Chọn học phần'; ?>">
+    <datalist id="coursePageList">
         <option value=''>Chọn học phần</option>
         <?php foreach ($courses as $c): ?>
-            <option value="<?php echo $c['course_code']; ?>" <?php echo $course == $c['course_code'] ? 'selected' : ''; ?>>
+            <option value="<?php echo $c['course_code']; ?>">
                 <?php echo htmlspecialchars($c['course_name']); ?>
             </option>
         <?php endforeach; ?>
-    </select>
+    </datalist>
     <form class="d-flex float-start" method="post" style="height: 35px;">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập mã sinh viên" aria-label="Search" required>
         <button class="btn btn-outline-success" type="submit" style="width:200px;">Tìm kiếm</button>
     </form>
-    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addGradeModal"><i class="material-icons">add</i> Thêm</button>
+    <button type="button" class="btn btn-primary float-end d-flex align-items-center ms-2" data-bs-toggle="modal" data-bs-target="#addGradeModal"><i class="material-icons">add</i> Thêm</button>
+    <button type="button" class="btn btn-warning float-end d-flex align-items-center text-white" data-bs-toggle="modal" data-bs-target="#importFileModal"><i class="material-icons">cloud_download</i> Nhập file</button>
     <table class="table">
         <thead>
             <tr>
@@ -93,15 +95,15 @@ if ($search) {
     </table>
     <ul class="pagination">
         <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=courses&num=<?php echo $page - 1; ?>">Trước</a>
+            <a class="page-link" href="?page=grades&num=<?php echo $page - 1; ?>&course=<?php echo $course ?>">Trước</a>
         </li>
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
             <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
-                <a class="page-link" href="?page=courses&num=<?php echo $i; ?>"><?php echo $i; ?></a>
+                <a class="page-link" href="?page=grades&num=<?php echo $i; ?>&course=<?php echo $course ?>"><?php echo $i; ?></a>
             </li>
         <?php endfor; ?>
         <li class="page-item <?php if ($page >= $total_pages) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=courses&num=<?php echo $page + 1; ?>">Sau</a>
+            <a class="page-link" href="?page=grades&num=<?php echo $page + 1; ?>&course=<?php echo $course ?>">Sau</a>
         </li>
     </ul>
     <!-- Modal thêm điểm học phần -->
@@ -118,6 +120,22 @@ if ($search) {
         <input type="text" class="form-control" id="student_id" placeholder="Nhập mã sinh viên" name="student_code" required>
         <div id="gradeFieldsContainer" class="mt-2"></div>
         <input class="btn btn-primary mt-2" type="button" value="+ Thêm học phần" id="addGradeButton"/>
+    </div>
+    ';
+    include 'app/views/components/modal.php';
+    ?>
+
+    <?php
+    $modalId = "importFileModal";
+    $modalLabelId = "importFileModalLabel";
+    $modalTitle = "Nhập thông tin từ file";
+    $formAction = "/app/controller/GradeController.php";
+    $formId = "importFileForm";
+    $formContent = '
+    <input type="hidden" name="action" value="import">
+    <div class="mb-3 container">
+        <label for="file" class="form-label">Chọn file</label>
+        <input type="file" class="form-control" id="file" name="data" required>
     </div>
     ';
     include 'app/views/components/modal.php';

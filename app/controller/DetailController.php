@@ -21,7 +21,8 @@ class DetailController
         g.grade AS grades, 
         g.language as language,
         g.infomatic as infomatic,
-        g.military as military
+        g.military as military,
+        g.practising as practising
         FROM students s 
         LEFT JOIN grades g ON s.student_code = g.student_code 
         WHERE s.student_code = '$student_code'
@@ -48,14 +49,18 @@ class DetailController
             $grades = json_decode($row['grades'], true);
             // Lặp qua mảng grades để lấy thông tin học phần
             foreach ($grades as $course_code => $grade) {
-                $course_query = "SELECT course_name, credits FROM courses WHERE course_code = '$course_code'";
+                $course_query = "SELECT course_name, credits, optional, accumulation FROM courses WHERE course_code = '$course_code'";
                 $course_result = mysqli_query($this->conn, $course_query);
                 $course_row = mysqli_fetch_assoc($course_result);
 
                 $course_grade[] = [
+                    'course_code' => $course_code,
                     'course_name' => $course_row['course_name'],
+                    'credits' => $course_row['credits'],
                     'grade' => $grade,
-                    'credits' => $course_row['credits']
+                    'credits' => $course_row['credits'],
+                    'optional' => $course_row['optional'],
+                    'accumulation' => $course_row['accumulation']
                 ];
             }
         }
