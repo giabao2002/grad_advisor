@@ -27,7 +27,8 @@ if ($search) {
         <button class="btn btn-outline-success mr-2" type="submit">Tìm kiếm</button>
     </form>
     <?php if ($_SESSION['auth_user']['role'] == 'GV'): ?>
-        <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addStudentModal"><i class="material-icons">add</i> Thêm sinh viên</button>
+        <button type="button" class="btn btn-primary float-end d-flex align-items-center ms-2" data-bs-toggle="modal" data-bs-target="#addStudentModal"><i class="material-icons">add</i> Thêm sinh viên</button>
+        <button type="button" class="btn btn-warning float-end d-flex align-items-center text-white" data-bs-toggle="modal" data-bs-target="#importFileModal"><i class="material-icons">cloud_download</i> Nhập file</button>
     <?php endif; ?>
     <table class="table">
         <thead>
@@ -64,8 +65,7 @@ if ($search) {
                                 data-identity="<?php echo htmlspecialchars($student['identity']); ?>"
                                 data-address="<?php echo htmlspecialchars($student['address']); ?>"
                                 data-gender="<?php echo htmlspecialchars($student['gender']); ?>"
-                                data-email="<?php echo htmlspecialchars($student['email']); ?>"
-                                data-major="<?php echo htmlspecialchars($student['major']); ?>">
+                                data-email="<?php echo htmlspecialchars($student['email']); ?>">
                                 <i class="material-icons">edit</i>
                             </button>
                             <form action="app/controller/StudentController.php" method="POST" style="display:inline;">
@@ -133,10 +133,6 @@ if ($search) {
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
-        </div>
-        <div class="mb-3">
-            <label for="major" class="form-label">Ngành học</label>
-            <input type="text" class="form-control" id="major" placeholder="Nhập ngành học" name="major" required>
         </div>';
     include 'app/views/components/modal.php';
     ?>
@@ -182,11 +178,23 @@ if ($search) {
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="mb-3">
-            <label for="major" class="form-label">Ngành học</label>
-            <input type="text" class="form-control" id="major" name="major" required>
         </div>';
+    include 'app/views/components/modal.php';
+    ?>
+
+    <?php
+    $modalId = "importFileModal";
+    $modalLabelId = "importFileModalLabel";
+    $modalTitle = "Nhập thông tin từ file";
+    $formAction = "/app/controller/StudentController.php";
+    $formId = "importFileForm";
+    $formContent = '
+    <input type="hidden" name="action" value="import">
+    <div class="mb-3 container">
+        <label for="file" class="form-label">Chọn file</label>
+        <input type="file" class="form-control" id="file" name="data" required>
+    </div>
+    ';
     include 'app/views/components/modal.php';
     ?>
 </nav>

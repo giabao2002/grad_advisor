@@ -10,6 +10,7 @@ $offset = ($page - 1) * $limit;
 
 $search = isset($_POST['search']) ? $_POST['search'] : '';
 $search_by = isset($_POST['search_by']) ? $_POST['search_by'] : '';
+$all_courses = $courseController->index(null,null);
 if ($search && $search_by) {
     $courses = $courseController->search($search, $search_by);
     $total_courses = count($courses);
@@ -36,7 +37,8 @@ if ($search && $search_by) {
         </select>
         <button class="btn btn-outline-success" type="submit" style="width:200px;">Tìm kiếm</button>
     </form>
-    <button type="button" class="btn btn-primary float-end d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="material-icons">add</i> Thêm học phần</button>
+    <button type="button" class="btn btn-primary float-end d-flex align-items-center ms-2" data-bs-toggle="modal" data-bs-target="#addCourseModal"><i class="material-icons">add</i> Thêm học phần</button>
+    <button type="button" class="btn btn-warning float-end d-flex align-items-center text-white" data-bs-toggle="modal" data-bs-target="#importFileModal"><i class="material-icons">cloud_download</i> Nhập file</button>
     <table class="table">
         <thead>
             <tr>
@@ -102,8 +104,8 @@ if ($search && $search_by) {
     $formAction = "/app/controller/CourseController.php";
     $formId = "addCourseForm";
     $options = '<option value="">Chọn học phần tiên quyết</option>';
-    foreach ($courses as $course) {
-        $options .= '<option value="' . $course['id'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
+    foreach ($all_courses as $course) {
+        $options .= '<option value="' . $course['course_code'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
     }
     $formContent = '
         <input type="hidden" name="action" value="store">
@@ -135,9 +137,10 @@ if ($search && $search_by) {
         </div>
         <div class="mb-3">
             <label for="pre_course" class="form-label">Học phần tiên quyết</label>
-            <select class="form-control" id="pre_course" name="pre_course">
+            <input type="text" class="form-control" id="pre_course" name="pre_course" list="pre_course_list" placeholder="Chọn học phần tiên quyết">
+            <datalist id="pre_course_list">
                 ' . $options . '
-            </select>
+            </datalist>
         </div>';
     include 'app/views/components/modal.php';
     ?>
@@ -150,8 +153,8 @@ if ($search && $search_by) {
     $formAction = "/app/controller/CourseController.php";
     $formId = "editCourseForm";
     $options = '<option value="">Chọn học phần tiên quyết</option>';
-    foreach ($courses as $course) {
-        $options .= '<option value="' . $course['id'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
+    foreach ($all_courses as $course) {
+        $options .= '<option value="' . $course['course_code'] . '">' . htmlspecialchars($course['course_name']) . '</option>';
     }
     $formContent = '
         <input type="hidden" name="action" value="update">
@@ -183,11 +186,28 @@ if ($search && $search_by) {
             </select>
         </div>
         <div class="mb-3">
-            <label for="pre_course" class="form-label">học phần tiên quyết</label>
-            <select class="form-control" id="pre_course" name="pre_course">
+            <label for="pre_course" class="form-label">Học phần tiên quyết</label>
+            <input type="text" class="form-control" id="pre_course" name="pre_course" list="pre_course_list" placeholder="Chọn học phần tiên quyết">
+            <datalist id="pre_course_list">
                 ' . $options . '
-            </select>
+            </datalist>
         </div>';
+    include 'app/views/components/modal.php';
+    ?>
+
+<?php
+    $modalId = "importFileModal";
+    $modalLabelId = "importFileModalLabel";
+    $modalTitle = "Nhập thông tin từ file";
+    $formAction = "/app/controller/CourseController.php";
+    $formId = "importFileForm";
+    $formContent = '
+    <input type="hidden" name="action" value="import">
+    <div class="mb-3 container">
+        <label for="file" class="form-label">Chọn file</label>
+        <input type="file" class="form-control" id="file" name="data" required>
+    </div>
+    ';
     include 'app/views/components/modal.php';
     ?>
 </nav>

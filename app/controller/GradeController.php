@@ -176,7 +176,6 @@ class GradeController
         }
 
         if ($xlsx = SimpleXLSX::parse($file['tmp_name'])) {
-            $data = [];
             $course_code = [];
 
             // Duyệt qua các hàng, bỏ qua hàng đầu tiên nếu là tiêu đề

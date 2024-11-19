@@ -1,5 +1,8 @@
 <?php
 require_once("/xampp/htdocs/core/db_connect.php");
+require_once("/xampp/htdocs/core/SimpleXLSX.php");
+
+use Shuchkin\SimpleXLSX;
 
 class CourseController
 {
@@ -13,7 +16,7 @@ class CourseController
 
     public function index($limit, $offset)
     {
-        $query = "SELECT c.*, pre_c.course_name AS pre_course_name FROM courses c LEFT JOIN courses pre_c ON c.pre_course = pre_c.id".(($limit !== null && $offset !== null)?" LIMIT $limit OFFSET $offset":"");
+        $query = "SELECT c.*, pre_c.course_name AS pre_course_name FROM courses c LEFT JOIN courses pre_c ON c.pre_course = pre_c.course_code" . (($limit !== null && $offset !== null) ? " LIMIT $limit OFFSET $offset" : "");
         $result = mysqli_query($this->conn, $query);
         $courses = mysqli_fetch_all($result, MYSQLI_ASSOC);
         return $courses;
@@ -45,12 +48,12 @@ class CourseController
             return "học phần đã tồn tại";
         } else {
             if (!empty($pre_course)) {
-                $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
+                $pre_course_query = "SELECT * FROM courses WHERE course_code = '$pre_course'";
                 $pre_course_result = mysqli_query($this->conn, $pre_course_query);
 
                 if (mysqli_num_rows($pre_course_result) == 0) {
                     // pre_course không tồn tại
-                    return "học phần tiên quyết không tồn tại";
+                    return "Học phần tiên quyết không tồn tại, vui lòng thêm mới hoặc chỉnh sửa lại sau!";
                 }
             }
             // Thêm mới học phần
@@ -77,12 +80,12 @@ class CourseController
         $accumulation = $data['accumulation'] ? $data['accumulation'] : null;
 
         if (!empty($pre_course)) {
-            $pre_course_query = "SELECT * FROM courses WHERE id = '$pre_course'";
+            $pre_course_query = "SELECT * FROM courses WHERE course = '$pre_course'";
             $pre_course_result = mysqli_query($this->conn, $pre_course_query);
 
             if (mysqli_num_rows($pre_course_result) == 0) {
                 // pre_course không tồn tại
-                return "học phần tiên quyết không tồn tại";
+                return "Học phần tiên quyết không tồn tại";
             }
         }
         // Cập nhật thông tin học phần
@@ -123,6 +126,51 @@ class CourseController
             return $courses;
         } else {
             return [];
+        }
+    }
+
+    public function import($file)
+    {
+        // Kiểm tra phần mở rộng của file
+        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $valid_extensions = ['xlsx'];
+        if (!in_array($file_extension, $valid_extensions)) {
+            return "File không hợp lệ! Chỉ chấp nhận các file có định dạng .xlsx.";
+        }
+
+        // Kiểm tra loại MIME của file
+        $file_mime = mime_content_type($file['tmp_name']);
+        $valid_mimes = [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        if (!in_array($file_mime, $valid_mimes)) {
+            return "File không hợp lệ! Chỉ chấp nhận các file có định dạng .xlsx.";
+        }
+
+        if ($xlsx = SimpleXLSX::parse($file['tmp_name'])) {
+            foreach ($xlsx->rows() as $index => $row) {
+                if ($index < 1) continue;
+                $course_code = $row[1];
+                $course_name = $row[2];
+                $credits = $row[3];
+                $optional = strlen($row[4]) > 0 ? 'Bắt buộc' : 'Tự chọn';
+                $pre_course = $row[6];
+
+                if (strlen($course_code) > 0) {
+                    $this->store([
+                        'course_code' => $course_code,
+                        'course_name' => $course_name,
+                        'credits' => $credits,
+                        'optional' => $optional,
+                        'pre_course' => $pre_course,
+                        'accumulation' => 0
+                    ]);
+                }
+            }
+            return "Thêm điểm thành công!";
+        } else {
+            // Lỗi khi đọc file
+            return "Lỗi khi đọc file Excel: " . SimpleXLSX::parseError();
         }
     }
 }
@@ -171,6 +219,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $id = $_POST['id'];
                 $courseController->destroy($id);
                 header("Location: /?page=courses");
+                break;
+            case 'import':
+                if (isset($_FILES['data'])) {
+                    $response = $courseController->import($_FILES['data']);
+                    if (gettype($response) == "string") {
+                        header("Location: /?page=courses&message=$response");
+                    } else {
+                        header("Location: /?page=courses");
+                    }
+                } else {
+                    $response = "Tải file không thành công!";
+                    header("Location: /?page=courses&message=$response");
+                }
                 break;
         }
     }

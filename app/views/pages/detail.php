@@ -18,7 +18,6 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <p class="fw-bold">Ngày sinh:</p>
                 <p class="fw-bold">Giới tính:</p>
                 <p class="fw-bold">Địa chỉ:</p>
-                <p class="fw-bold">Ngành học:</p>
                 <p class="fw-bold">Email:</p>
                 <p class="fw-bold">Tình trạng:</p>
                 <p class="fw-bold">Chứng chỉ ngoại ngữ:</p>
@@ -38,7 +37,6 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 </p>
                 <p><?php echo $students['gender']; ?></p>
                 <p><?php echo $students['address']; ?></p>
-                <p><?php echo $students['major']; ?></p>
                 <p><?php echo $students['email']; ?></p>
                 <p class="<?php
                             if ($students['status'] == 'Đã tốt nghiệp') {
