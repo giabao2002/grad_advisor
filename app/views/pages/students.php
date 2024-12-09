@@ -22,6 +22,12 @@ if ($search) {
 ?>
 
 <nav aria-label="Page navigation example">
+    <?php if (isset($_GET['message'])): ?>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <?php echo $_GET['message']; ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
     <form class="d-flex float-start" method="post">
         <input class="form-control-sm me-2" name="search" type="search" placeholder="Nhập mã sinh viên" aria-label="Search" required>
         <button class="btn btn-outline-success mr-2" type="submit">Tìm kiếm</button>
@@ -41,6 +47,7 @@ if ($search) {
                 <th scope="col">CCCD</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Email</th>
+                <th scope="col">Chuyên ngành</th>
                 <th scope="col">Thao tác</th>
             </tr>
         </thead>
@@ -55,6 +62,20 @@ if ($search) {
                     <td><?php echo htmlspecialchars($student['identity']); ?></td>
                     <td><?php echo htmlspecialchars($student['status']); ?></td>
                     <td><?php echo htmlspecialchars($student['email']); ?></td>
+                    <td>
+                        <?php
+                        $major_code = $student['major'];
+                        $query = "Select major_name from majors where major_code = '$major_code'";
+                        $result = mysqli_query($conn, $query);
+
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            $row = mysqli_fetch_assoc($result);
+                            echo $row['major_name'];
+                        } else {
+                            echo "";
+                        }
+                        ?>
+                    </td>
                     <td>
                         <?php if ($_SESSION['auth_user']['role'] == 'GV'): ?>
                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editStudentModal"

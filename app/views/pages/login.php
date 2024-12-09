@@ -61,6 +61,7 @@
                     <select name="role" class="form-select">
                         <option value="CVHT">Cố vấn học tập</option>
                         <option value="GV" selected>Giáo viên</option>
+                        <option value="ADMIN">Quản trị viên</option>
                     </select>
                 </div>
                 <div class="mb-3">

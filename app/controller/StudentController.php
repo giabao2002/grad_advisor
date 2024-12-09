@@ -44,7 +44,8 @@ class StudentController
         $address = $data['address'];
         $gender = $data['gender'];
         $dob = $data['dob'];
-        $query = "INSERT INTO students (student_code,full_name, dob, email, identity, address, gender) VALUES ('$student_code','$fullname', '$dob', '$email', '$identity', '$address', '$gender')";
+        $major = $data['major'];
+        $query = "INSERT INTO students (student_code,full_name, dob, email, identity, address, gender, major) VALUES ('$student_code','$fullname', '$dob', '$email', '$identity', '$address', '$gender', '$major')";
         if (mysqli_query($this->conn, $query)) {
             return true;
         } else {
@@ -121,6 +122,7 @@ class StudentController
                 $identity = $row[7];
                 $status = $row[8];
                 $email = $row[9];
+                $major = $row[10];
 
                 $dob_date = DateTime::createFromFormat('d/m/Y', $dob);
                 if ($dob_date) {
@@ -138,7 +140,8 @@ class StudentController
                         'address' => $address,
                         'gender' => $gender,
                         'dob' => $dob,
-                        'status' => $status
+                        'status' => $status,
+                        'major' => $major
                     ]);
                 }
             }

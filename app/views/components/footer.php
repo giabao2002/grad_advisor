@@ -59,6 +59,29 @@
             });
         }
 
+        var editUserModal = document.getElementById('editUserModal');
+        if(editUserModal) {
+            editUserModal.addEventListener('show.bs.modal', function(event) {
+                var button = event.relatedTarget; // Nút kích hoạt modal
+                console.log(button);
+                var id = button.getAttribute('data-id');
+                var username = button.getAttribute('data-username');
+                var email = button.getAttribute('data-email');
+                var role = button.getAttribute('data-role');
+                var password = button.getAttribute('data-password');
+
+                console.log(id);
+
+                // Điền thông tin vào các trường trong form
+                var modal = this;
+                modal.querySelector('#id').value = id;
+                modal.querySelector('#username').value = username;
+                modal.querySelector('#email').value = email;
+                modal.querySelector('#role').value = role;
+                modal.querySelector('#oldPassword').value = password;
+            });
+        }
+
         // Lấy khóa học đã chọn
         var courseSelect = document.getElementById('coursePageSelect');
 
@@ -66,6 +89,13 @@
             var selectedValue = courseSelect.value;
 
             window.location.href = '?page=grades&course=' + selectedValue;
+        });
+
+        var majorSelect = document.getElementById('majorSelect');
+
+        majorSelect && majorSelect.addEventListener('change', function() {
+            var selectedValue = majorSelect.value;
+            window.location.href = '?page=progress&major=' + selectedValue;
         });
 
         var graduateSelect = document.getElementById('graduateSelect');

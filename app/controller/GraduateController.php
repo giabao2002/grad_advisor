@@ -30,6 +30,17 @@ class GraduateController
                     FROM courses c
                     WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
                 ) = (SELECT COUNT(*) FROM courses)
+                AND (
+                    SELECT COUNT(*)
+                    FROM courses c
+                    WHERE c.optional = 1
+                    AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
+                ) >= 1 -- Kiểm tra đủ ít nhất 1 môn tự chọn đạt điểm
+                AND (
+                    SELECT SUM(c.credits)
+                    FROM courses c
+                    WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
+                ) >= 130 -- Đảm bảo tổng tín chỉ >= 130
                 AND g.language = 'Đạt'
                 AND g.military = 'Đạt'
                 AND g.infomatic = 'Đạt'

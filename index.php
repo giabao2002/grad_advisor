@@ -9,10 +9,12 @@ $page_titles = [
     'grades' => 'Quản lý điểm',
     'courses' => 'Quản lý học phần',
     'students' => 'Quản lý sinh viên',
-    'progress' => 'Quản lý cây tiến trình',
+    'progress' => 'Tiến trình học tập',
     'detail' => 'Chi tiết sinh viên',
     'certificate' => 'Danh sách văn bằng',
-    'graduate' => 'Xét tốt nghiệp'
+    'graduate' => 'Xét tốt nghiệp',
+    'majors' => 'Quản lý chuyên ngành',
+    'accounts' => 'Quản lý người dùng'
 ];
 ?>
 <div class="container-fluid">
@@ -44,7 +46,7 @@ $page_titles = [
             <?php
             if (isset($_GET['page'])) {
                 $page = $_GET['page'];
-                $allowed_pages = ['grades', 'courses', 'students', 'progress', 'detail','graduate'];
+                $allowed_pages = ['grades', 'courses', 'students', 'progress', 'detail', 'graduate', 'majors', 'accounts'];
                 if (in_array($page, $allowed_pages)) {
                     require_once("app/views/pages/{$page}.php");
                 } else {

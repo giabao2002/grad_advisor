@@ -5,7 +5,7 @@ $detailController = new DetailController($conn);
 
 $student_code = $_GET['student_code'];
 $students = $detailController->index($student_code);
-$study_progress = $detailController->getCoursesTree($student_code);
+// $study_progress = $detailController->getCoursesTree($student_code);
 ?>
 <nav aria-label="Page navigation">
     <div class="container overflow-hidden">
@@ -19,6 +19,7 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <p class="fw-bold">Giới tính:</p>
                 <p class="fw-bold">Địa chỉ:</p>
                 <p class="fw-bold">Email:</p>
+                <p class="fw-bold">Ngành học</p>
                 <p class="fw-bold">Tình trạng:</p>
                 <p class="fw-bold">Chứng chỉ ngoại ngữ:</p>
                 <p class="fw-bold">Chứng chỉ tin học:</p>
@@ -38,6 +39,20 @@ $study_progress = $detailController->getCoursesTree($student_code);
                 <p><?php echo $students['gender']; ?></p>
                 <p><?php echo $students['address']; ?></p>
                 <p><?php echo $students['email']; ?></p>
+                <p>
+                    <?php
+                    $major_code = $students['major'];
+                    $query = "Select major_name from majors where major_code = '$major_code'";
+                    $result = mysqli_query($conn, $query);
+
+                    if ($result && mysqli_num_rows($result) > 0) {
+                        $row = mysqli_fetch_assoc($result);
+                        echo $row['major_name'];
+                    } else {
+                        echo "";
+                    }
+                    ?>
+                </p>
                 <p class="<?php
                             if ($students['status'] == 'Đã tốt nghiệp') {
                                 echo 'text-success';

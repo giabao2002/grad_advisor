@@ -71,69 +71,69 @@ class DetailController
         return $row;
     }
 
-    function getCoursesTree($student_code)
-    {
-        $student_code = mysqli_real_escape_string($this->conn, $student_code);
-        $queryGetAllCourses = "SELECT * FROM courses";
-        $resultGetAllCourses = mysqli_query($this->conn, $queryGetAllCourses);
-        $courses = [];
-        while ($row = mysqli_fetch_assoc($resultGetAllCourses)) {
-            $courses[] = $row;
-        }
-        $queryGetGrades = "SELECT grade FROM grades WHERE student_code = '$student_code'";
-        $resultGetGrades = mysqli_query($this->conn, $queryGetGrades);
-        $gradeCourses = "";
-        while ($row = mysqli_fetch_assoc($resultGetGrades)) {
-            $gradeCourses = $row['grade'];
-        }
+    // function getCoursesTree($student_code)
+    // {
+    //     $student_code = mysqli_real_escape_string($this->conn, $student_code);
+    //     $queryGetAllCourses = "SELECT * FROM courses";
+    //     $resultGetAllCourses = mysqli_query($this->conn, $queryGetAllCourses);
+    //     $courses = [];
+    //     while ($row = mysqli_fetch_assoc($resultGetAllCourses)) {
+    //         $courses[] = $row;
+    //     }
+    //     $queryGetGrades = "SELECT grade FROM grades WHERE student_code = '$student_code'";
+    //     $resultGetGrades = mysqli_query($this->conn, $queryGetGrades);
+    //     $gradeCourses = "";
+    //     while ($row = mysqli_fetch_assoc($resultGetGrades)) {
+    //         $gradeCourses = $row['grade'];
+    //     }
 
-        $gradeCoursesArray = [];
-        if ($gradeCourses !== "") {
-            $gradeCoursesArray = json_decode($gradeCourses, true);
-        }
+    //     $gradeCoursesArray = [];
+    //     if ($gradeCourses !== "") {
+    //         $gradeCoursesArray = json_decode($gradeCourses, true);
+    //     }
 
 
-        // Tạo một mảng tạm thời để lưu trữ các khóa học theo cấu trúc cây
-        $tempCourses = [];
-        foreach ($courses as $course) {
-            if ( !empty($gradeCoursesArray) && array_key_exists($course['course_code'], $gradeCoursesArray)) {
-                if (intval($gradeCoursesArray[$course['course_code']]) >= 5) {
-                    $tempCourses[$course['id']] = [
-                        'course_name' => $course['course_name'],
-                        'pre_course' => $course['pre_course'],
-                        'color' => 'green',
-                        'children' => []
-                    ];
-                } else {
-                    $tempCourses[$course['id']] = [
-                        'course_name' => $course['course_name'],
-                        'pre_course' => $course['pre_course'],
-                        'color' => 'yellow',
-                        'children' => []
-                    ];
-                }
-            } else {
-                $tempCourses[$course['id']] = [
-                    'course_name' => $course['course_name'],
-                    'pre_course' => $course['pre_course'],
-                    'color' => 'red',
-                    'children' => []
-                ];
-            }
-        }
+    //     // Tạo một mảng tạm thời để lưu trữ các khóa học theo cấu trúc cây
+    //     $tempCourses = [];
+    //     foreach ($courses as $course) {
+    //         if ( !empty($gradeCoursesArray) && array_key_exists($course['course_code'], $gradeCoursesArray)) {
+    //             if (intval($gradeCoursesArray[$course['course_code']]) >= 5) {
+    //                 $tempCourses[$course['id']] = [
+    //                     'course_name' => $course['course_name'],
+    //                     'pre_course' => $course['pre_course'],
+    //                     'color' => 'green',
+    //                     'children' => []
+    //                 ];
+    //             } else {
+    //                 $tempCourses[$course['id']] = [
+    //                     'course_name' => $course['course_name'],
+    //                     'pre_course' => $course['pre_course'],
+    //                     'color' => 'yellow',
+    //                     'children' => []
+    //                 ];
+    //             }
+    //         } else {
+    //             $tempCourses[$course['id']] = [
+    //                 'course_name' => $course['course_name'],
+    //                 'pre_course' => $course['pre_course'],
+    //                 'color' => 'red',
+    //                 'children' => []
+    //             ];
+    //         }
+    //     }
 
-        // Tạo mảng để lưu trữ các đối tượng học phần của cây hoàn chỉnh
-        $coursesTree = [];
+    //     // Tạo mảng để lưu trữ các đối tượng học phần của cây hoàn chỉnh
+    //     $coursesTree = [];
 
-        // Xây dựng cấu trúc cây
-        foreach ($tempCourses as $id => &$course) {
-            if ($course['pre_course'] === null) {
-                $coursesTree[] = &$course;
-            } else {
-                $tempCourses[$course['pre_course']]['children'][] = &$course;
-            }
-        }
+    //     // Xây dựng cấu trúc cây
+    //     foreach ($tempCourses as $id => &$course) {
+    //         if ($course['pre_course'] === null) {
+    //             $coursesTree[] = &$course;
+    //         } else {
+    //             $tempCourses[$course['pre_course']]['children'][] = &$course;
+    //         }
+    //     }
 
-        return $coursesTree;
-    }
+    //     return $coursesTree;
+    // }
 }
