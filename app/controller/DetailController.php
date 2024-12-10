@@ -12,26 +12,56 @@ class DetailController
 
     function index($student_code)
     {
-        // ngăn chặn SQL Injection
+        // Ngăn chặn SQL Injection
         $student_code = mysqli_real_escape_string($this->conn, $student_code);
 
+        // Query lấy thông tin sinh viên và điểm
         $query = "
-        SELECT 
+    SELECT 
         s.*, 
         g.grade AS grades, 
         g.language as language,
         g.infomatic as infomatic,
         g.military as military,
         g.practising as practising
-        FROM students s 
-        LEFT JOIN grades g ON s.student_code = g.student_code 
-        WHERE s.student_code = '$student_code'
-        ";
+    FROM students s 
+    LEFT JOIN grades g ON s.student_code = g.student_code 
+    WHERE s.student_code = '$student_code'
+    ";
 
         $result = mysqli_query($this->conn, $query);
         $row = mysqli_fetch_assoc($result);
+
+        // Giải mã JSON từ cột 'grades'
+        $grades = $row['grades'] ? json_decode($row['grades'], true) : [];
+
+        // Lọc danh sách các mã học phần đã có điểm
+        $valid_course_codes = [];
+        foreach ($grades as $course_code => $grade) {
+            if (!is_null($grade) && $grade !== '') { // Chỉ lấy các môn có điểm
+                $valid_course_codes[] = $course_code;
+            }
+        }
+
+        // Nếu không có môn nào có điểm, tổng tín chỉ là 0
+        $total_credits = 0;
+        if (!empty($valid_course_codes)) {
+            // Tạo danh sách mã học phần hợp lệ để dùng trong truy vấn
+            $course_codes_list = "'" . implode("','", $valid_course_codes) . "'";
+
+            // Query tính tổng tín chỉ của các môn có điểm
+            $total_credits_query = "
+            SELECT SUM(credits) as total_credits 
+            FROM courses 
+            WHERE course_code IN ($course_codes_list)
+        ";
+            $credits_result = mysqli_query($this->conn, $total_credits_query);
+            $credits_row = mysqli_fetch_assoc($credits_result);
+            $total_credits = $credits_row['total_credits'] ?? 0;
+        }
+
         // Lấy số học phần trong trường grade của bảng grades
-        $grade_courses_count = $row['grades'] ? count(json_decode($row['grades'], true)) : 0;
+        $grade_courses_count = count($valid_course_codes);
 
         // Lấy tổng số học phần của bảng courses
         $courses_query = "SELECT COUNT(*) as total_courses FROM courses";
@@ -39,28 +69,26 @@ class DetailController
         $courses_row = mysqli_fetch_assoc($courses_result);
         $total_courses_count = $courses_row['total_courses'];
 
-        // Thêm số học phần vào biến $row
-        $row['grade_courses_count'] = $grade_courses_count;
-        $row['total_courses_count'] = $total_courses_count;
+        // Thêm số học phần và tổng tín chỉ vào biến $row
+        $row['grade_courses_count'] = $grade_courses_count; // Số học phần đã có điểm
+        $row['total_courses_count'] = $total_courses_count; // Tổng số học phần trong hệ thống
+        $row['grade_course_credits'] = $total_credits; // Tổng tín chỉ các môn có điểm
 
         // Chuyển chuỗi JSON thành mảng
         $course_grade = [];
-        if ($row['grades']) {
-            $grades = json_decode($row['grades'], true);
-            // Lặp qua mảng grades để lấy thông tin học phần
-            foreach ($grades as $course_code => $grade) {
-                $course_query = "SELECT course_name, credits, optional, accumulation FROM courses WHERE course_code = '$course_code'";
-                $course_result = mysqli_query($this->conn, $course_query);
-                $course_row = mysqli_fetch_assoc($course_result);
+        foreach ($grades as $course_code => $grade) {
+            $course_query = "SELECT course_name, credits, optional, accumulation FROM courses WHERE course_code = '$course_code'";
+            $course_result = mysqli_query($this->conn, $course_query);
+            $course_row = mysqli_fetch_assoc($course_result);
 
+            if ($course_row) {
                 $course_grade[] = [
                     'course_code' => $course_code,
                     'course_name' => $course_row['course_name'],
-                    'credits' => $course_row['credits'],
-                    'grade' => $grade,
-                    'credits' => $course_row['credits'],
-                    'optional' => $course_row['optional'],
-                    'accumulation' => $course_row['accumulation']
+                    'credits' => !empty($course_row['credits']) ? $course_row['credits'] : 0,
+                    'grade' => !empty($grade) ? $grade : 'Chưa có điểm',
+                    'optional' => isset($course_row['optional']) ? $course_row['optional'] : 0,
+                    'accumulation' => isset($course_row['accumulation']) ? $course_row['accumulation'] : 0,
                 ];
             }
         }
@@ -70,6 +98,8 @@ class DetailController
 
         return $row;
     }
+
+
 
     // function getCoursesTree($student_code)
     // {

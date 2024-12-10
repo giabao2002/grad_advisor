@@ -5,6 +5,7 @@ $detailController = new DetailController($conn);
 
 $student_code = $_GET['student_code'];
 $students = $detailController->index($student_code);
+// var_dump($students);
 // $study_progress = $detailController->getCoursesTree($student_code);
 ?>
 <nav aria-label="Page navigation">
@@ -78,7 +79,7 @@ $students = $detailController->index($student_code);
                     <?php echo isset($students['practising']) ? $students['practising'] : "Chưa đạt"; ?>
                     <a type="button" href="/app/controller/GraduateController.php?cert=practising&student_code=<?php echo $students['student_code']; ?>&status=<?php echo $students['practising']; ?>"><i class="material-icons">autorenew</i></a>
                 </p>
-                <p><?php echo $students['grade_courses_count'] . "/" . $students['total_courses_count']; ?></p>
+                <p><?php echo $students['grade_course_credits'] . "/" . '130'; ?></p>
             </div>
         </div>
         <div class="row shadow-lg p-3 mb-5 bg-body rounded">

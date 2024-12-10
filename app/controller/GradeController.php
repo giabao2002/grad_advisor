@@ -17,10 +17,10 @@ class GradeController
     public function index($limit, $offset, $course)
     {
         $query = "
-            SELECT s.full_name, g.*, JSON_UNQUOTE(JSON_EXTRACT(g.grade, '$.\"$course\"')) AS course_grade 
+            SELECT s.full_name, g.*, JSON_UNQUOTE(JSON_EXTRACT(g.grade, '$.$course')) AS course_grade 
             FROM grades g 
             LEFT JOIN students s ON g.student_code = s.student_code 
-            WHERE JSON_CONTAINS_PATH(g.grade, 'one', '$.\"$course\"') 
+            WHERE JSON_CONTAINS_PATH(g.grade, 'one', '$.$course') 
             LIMIT $offset, $limit
         ";
         $result = mysqli_query($this->conn, $query);
@@ -42,6 +42,7 @@ class GradeController
         $courses = $data['courses'];
         $grades = $data['grades'];
 
+        // Kiểm tra sinh viên có tồn tại không
         $student_query = "SELECT * FROM students WHERE student_code = '$student_code'";
         $student_result = mysqli_query($this->conn, $student_query);
 
@@ -49,60 +50,68 @@ class GradeController
             return "Mã sinh viên không tồn tại";
         }
 
-        // Tạo mảng để lưu điểm dưới dạng JSON
+        // Tạo mảng lưu điểm dưới dạng JSON
         $grades_json = [];
         foreach ($courses as $index => $course_id) {
             $grades_json[$course_id] = $grades[$index];
         }
-        $grades_json = json_encode($grades_json);
 
-        // Kiểm tra xem sinh viên đã có trong danh sách hay chưa
+        // Kiểm tra tính hợp lệ của JSON
+        if (!is_array($grades_json) || json_encode($grades_json) === false) {
+            return "Dữ liệu điểm không hợp lệ";
+        }
+
+        $grades_json_string = json_encode($grades_json);
+
+        // Kiểm tra xem sinh viên đã có điểm trong bảng chưa
         $check_query = "
-            SELECT 
-                g.student_code, 
-                JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) AS course_grade,
-                c.course_code,
-                c.course_name
-            FROM grades g
-            JOIN courses c ON JSON_CONTAINS_PATH(g.grade, 'one', CONCAT('$.\"', c.course_code, '\"'))
-            WHERE g.student_code = '$student_code'
-        ";
+        SELECT grade 
+        FROM grades 
+        WHERE student_code = '$student_code'
+    ";
         $check_result = mysqli_query($this->conn, $check_query);
 
-        if ($check_result) {
-            $existing_grades = [];
-            while ($row = mysqli_fetch_assoc($check_result)) {
-                $existing_grades[$row['course_code']] = $row['course_grade'];
+        if ($check_result && mysqli_num_rows($check_result) > 0) {
+            $row = mysqli_fetch_assoc($check_result);
+            $existing_grades = json_decode($row['grade'], true);
+
+            // Kiểm tra tính hợp lệ của JSON đã lưu
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return "Dữ liệu điểm cũ không hợp lệ. Vui lòng kiểm tra cơ sở dữ liệu.";
             }
 
+            // So sánh và chỉ thêm điểm mới nếu chưa có
             foreach ($courses as $index => $course_id) {
                 if (isset($existing_grades[$course_id])) {
-                    // Nếu đã có điểm cho học phần này, bỏ qua việc thêm hoặc cập nhật
-                    return "Điểm cho học phần đã có, không thể sửa!";
+                    return "Điểm cho học phần $course_id đã tồn tại, không thể sửa!";
                 }
-
-                // Nếu chưa có điểm cho học phần này, thêm hoặc cập nhật điểm
-                $update_query = "
-                    UPDATE grades 
-                    SET grade = JSON_SET(grade, '$.\"$course_id\"', '$grades[$index]') 
-                    WHERE student_code = '$student_code'
-                ";
-                if (!mysqli_query($this->conn, $update_query)) {
-                    return "Lỗi khi cập nhật điểm cho sinh viên";
-                }
+                $existing_grades[$course_id] = $grades[$index];
             }
 
-            // Nếu không có học phần nào cần cập nhật, trả về thông báo
-            if (empty($existing_grades)) {
-                $insert_query = "INSERT INTO grades (student_code, grade) VALUES ('$student_code', '$grades_json')";
-                if (!mysqli_query($this->conn, $insert_query)) {
-                    return "Lỗi khi thêm điểm cho sinh viên";
-                }
+            // Cập nhật điểm
+            $updated_grades = json_encode($existing_grades);
+            $update_query = "
+            UPDATE grades 
+            SET grade = '$updated_grades' 
+            WHERE student_code = '$student_code'
+        ";
+            if (!mysqli_query($this->conn, $update_query)) {
+                return "Lỗi khi cập nhật điểm cho sinh viên";
+            }
+        } else {
+            // Thêm mới điểm nếu sinh viên chưa có trong bảng
+            $insert_query = "
+            INSERT INTO grades (student_code, grade) 
+            VALUES ('$student_code', '$grades_json_string')
+        ";
+            if (!mysqli_query($this->conn, $insert_query)) {
+                return "Lỗi khi thêm điểm cho sinh viên";
             }
         }
 
         return true;
     }
+
 
     public function destroy($id, $course)
     {
@@ -185,18 +194,25 @@ class GradeController
                 // Lấy mã học phần từ hàng thứ 5
                 if ($index == 5) {
                     $col = 3;
-                    while ($row[$col]) {
+                    while (!empty($row[$col])) {
                         $result = preg_replace('/\s*\(\d+\)$/', '', $row[$col]);
-                        $course_code[] = $result;
+
+                        // Kiểm tra tính hợp lệ của mã học phần
+                        if ($this->isValidCourseCode($result)) {
+                            $course_code[] = $result;
+                        } else {
+                            $invalid_course_codes[] = $result;
+                        }
+
                         $col += 2;
                     }
                 }
                 // Bắt đầu lấy điểm từ hàng thứ 10
-                if($index > 9 ){
+                if ($index > 8) {
                     $studentCode = $row[1] ?? null;
                     $grades = [];
                     $col = 4;
-                    for($i = 0; $i < count($course_code); $i++){
+                    for ($i = 0; $i < count($course_code); $i++) {
                         $grades[] = $row[$col] ?? null;
                         $col += 2;
                     }
@@ -215,7 +231,13 @@ class GradeController
             return "Lỗi khi đọc file Excel: " . SimpleXLSX::parseError();
         }
     }
+    
+    private function isValidCourseCode($courseCode)
+    {
+        return preg_match('/^[A-Z]{2}\d{4}$/', $courseCode);
+    }
 }
+
 
 // Khởi tạo controller
 $gradeController = new GradeController($conn);

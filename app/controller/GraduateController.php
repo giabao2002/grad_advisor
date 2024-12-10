@@ -20,30 +20,28 @@ class GraduateController
                 SELECT s.*
                 FROM students s
                 JOIN grades g ON s.student_code = g.student_code
-                WHERE (
-                    SELECT COUNT(*)
+                WHERE 
+                    -- Kiểm tra có ít nhất một môn tự chọn đạt >= 5
+                    (SELECT COUNT(*)
                     FROM courses c
-                    WHERE JSON_CONTAINS_PATH(g.grade, 'one', CONCAT('$.\"', c.course_code, '\"'))
-                ) = (SELECT COUNT(*) FROM courses)
-                AND (
-                    SELECT COUNT(*)
+                    WHERE c.optional = 'Tự chọn' 
+                    AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 1
+                    
+                    -- Kiểm tra tất cả các môn bắt buộc đều đạt > 5
+                    AND (SELECT COUNT(*)
                     FROM courses c
-                    WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
-                ) = (SELECT COUNT(*) FROM courses)
-                AND (
-                    SELECT COUNT(*)
-                    FROM courses c
-                    WHERE c.optional = 1
-                    AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
-                ) >= 1 -- Kiểm tra đủ ít nhất 1 môn tự chọn đạt điểm
-                AND (
-                    SELECT SUM(c.credits)
-                    FROM courses c
-                    WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5
-                ) >= 130 -- Đảm bảo tổng tín chỉ >= 130
-                AND g.language = 'Đạt'
-                AND g.military = 'Đạt'
-                AND g.infomatic = 'Đạt'
+                    WHERE c.optional = 'Bắt buộc' 
+                    AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 1
+
+                    -- Đảm bảo tổng tín chỉ các môn đạt >= 5 là >= 130
+                    AND (SELECT SUM(c.credits)
+                        FROM courses c
+                        WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 130
+                    
+                    -- Đảm bảo các điều kiện khác
+                    AND g.language = 'Đạt'
+                    AND g.military = 'Đạt'
+                    AND g.infomatic = 'Đạt'
                 LIMIT $offset, $limit
             ";
         } else {

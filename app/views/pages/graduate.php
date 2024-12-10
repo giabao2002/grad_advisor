@@ -46,6 +46,7 @@ if ($search) {
                 <th scope="col">CCCD</th>
                 <th scope="col">Trạng thái</th>
                 <th scope="col">Email</th>
+                <th scope="col">Ngành học</th>
                 <th scope="col">Thao tác</th>
             </tr>
         </thead>
