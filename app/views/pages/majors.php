@@ -27,7 +27,7 @@ $total_pages = ceil($total_majors / $limit);
         <tbody>
             <?php foreach ($majors as $index => $major): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                     <td><?php echo htmlspecialchars($major['major_code']); ?></td>
                     <td class="col-2"><?php echo htmlspecialchars($major['major_name']); ?></td>
                     <td>

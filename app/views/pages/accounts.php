@@ -45,7 +45,7 @@ if ($search) {
         <tbody>
             <?php foreach ($users as $index => $user): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                     <td><?php echo htmlspecialchars($user['email']); ?></td>
                     <td><?php

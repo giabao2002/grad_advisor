@@ -17,7 +17,7 @@ if ($search) {
 } else {
     //Lấy danh sách sinh viên và tổng số sinh viên
     $students = $graduateController->index($limit, $offset, $status);
-    $total_students = $graduateController->count();
+    $total_students = $graduateController->count($status);
     $total_pages = ceil($total_students / $limit);
 }
 ?>
@@ -53,7 +53,7 @@ if ($search) {
         <tbody>
             <?php foreach ($students as $index => $student): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                     <td><?php echo htmlspecialchars($student['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($student['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($student['gender']); ?></td>
@@ -90,15 +90,15 @@ if ($search) {
     </table>
     <ul class="pagination">
         <li class="page-item <?php if ($page <= 1) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=students&num=<?php echo $page - 1; ?>">Trước</a>
+            <a class="page-link" href="?page=graduate&num=<?php echo $page - 1; ?>&status=<?php echo $status;?>">Trước</a>
         </li>
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
             <li class="page-item <?php if ($page == $i) echo 'active'; ?>">
-                <a class="page-link" href="?page=students&num=<?php echo $i; ?>"><?php echo $i; ?></a>
+                <a class="page-link" href="?page=graduate&num=<?php echo $i; ?>&status=<?php echo $status;?>"><?php echo $i; ?></a>
             </li>
         <?php endfor; ?>
         <li class="page-item <?php if ($page >= $total_pages) echo 'disabled'; ?>">
-            <a class="page-link" href="?page=students&num=<?php echo $page + 1; ?>">Sau</a>
+            <a class="page-link" href="?page=graduate&num=<?php echo $page + 1; ?>&status=<?php echo $status;?>">Sau</a>
         </li>
     </ul>
     <!-- Modal thêm sinh viên -->

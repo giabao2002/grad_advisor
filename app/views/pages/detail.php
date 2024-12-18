@@ -101,7 +101,7 @@ $students = $detailController->index($student_code);
                 <tbody>
                     <?php foreach ($students['course_grades'] as $index => $course_grade): ?>
                         <tr>
-                            <th scope="row"><?php echo $index + 1; ?></th>
+                            <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                             <td><?php echo htmlspecialchars($course_grade['course_code']); ?></td>
                             <td><?php echo htmlspecialchars($course_grade['course_name']); ?></td>
                             <td><?php echo htmlspecialchars($course_grade['credits']); ?></td>

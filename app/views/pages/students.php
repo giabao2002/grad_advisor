@@ -54,7 +54,7 @@ if ($search) {
         <tbody>
             <?php foreach ($students as $index => $student): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + (10 * ($page-1) + ($index + 1)); ?></th>
                     <td><?php echo htmlspecialchars($student['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($student['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($student['gender']); ?></td>

@@ -80,12 +80,65 @@ class GraduateController
         return $students;
     }
 
-    public function count()
+    public function count($status)
     {
-        $query = "SELECT COUNT(*) as total FROM students";
+        $query="";
+        if($status == "1"){
+            $query="
+            SELECT COUNT(*)
+            FROM students s
+            JOIN grades g ON s.student_code = g.student_code
+            WHERE 
+                -- Kiểm tra có ít nhất một môn tự chọn đạt >= 5
+                (SELECT COUNT(*)
+                FROM courses c
+                WHERE c.optional = 'Tự chọn' 
+                AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 1
+                
+                -- Kiểm tra tất cả các môn bắt buộc đều đạt > 5
+                AND (SELECT COUNT(*)
+                FROM courses c
+                WHERE c.optional = 'Bắt buộc' 
+                AND JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 1
+
+                -- Đảm bảo tổng tín chỉ các môn đạt >= 5 là >= 130
+                AND (SELECT SUM(c.credits)
+                    FROM courses c
+                    WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) >= 5) >= 130
+                
+                -- Đảm bảo các điều kiện khác
+                AND g.language = 'Đạt'
+                AND g.military = 'Đạt'
+                AND g.infomatic = 'Đạt'
+            ";
+        } else {
+            $query = "
+            SELECT COUNT(*)
+            FROM students s
+            LEFT JOIN grades g ON s.student_code = g.student_code
+            WHERE (
+                g.student_code IS NULL
+                OR (
+                    SELECT COUNT(*)
+                    FROM courses c
+                    WHERE JSON_CONTAINS_PATH(g.grade, 'one', CONCAT('$.\"', c.course_code, '\"'))
+                ) < (SELECT COUNT(*) FROM courses)
+                OR (
+                    SELECT COUNT(*)
+                    FROM courses c
+                    WHERE JSON_UNQUOTE(JSON_EXTRACT(g.grade, CONCAT('$.\"', c.course_code, '\"'))) < 5
+                ) > 0
+                OR g.language != 'Đạt'
+                OR g.military != 'Đạt'
+                OR g.infomatic != 'Đạt'
+                OR g.grade IS NULL
+                OR g.grade = ''
+            )
+            ";
+        }
         $result = mysqli_query($this->conn, $query);
         $row = mysqli_fetch_assoc($result);
-        return $row['total'];
+        return $row['COUNT(*)'];
     }
 
 

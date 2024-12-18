@@ -62,7 +62,7 @@ if ($search) {
         <tbody>
             <?php foreach ($grades as $index => $grade): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                     <td><?php echo htmlspecialchars($grade['student_code']); ?></td>
                     <td><?php echo htmlspecialchars($grade['full_name']); ?></td>
                     <td><?php echo htmlspecialchars($grade['course_grade']); ?></td>

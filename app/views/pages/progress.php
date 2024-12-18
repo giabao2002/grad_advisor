@@ -61,7 +61,7 @@ if ($search) {
         <tbody>
             <?php foreach ($courses as $index => $course): ?>
                 <tr>
-                    <th scope="row"><?php echo $index + 1; ?></th>
+                    <th scope="row"><?php echo 10 * ($page-1) + ($index + 1); ?></th>
                     <td><?php echo htmlspecialchars($course['course_code']); ?></td>
                     <td class="col-2"><?php echo htmlspecialchars($course['course_name']); ?></td>
                     <td><?php echo htmlspecialchars($course['credits']); ?></td>
